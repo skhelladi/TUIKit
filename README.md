@@ -91,7 +91,7 @@ int main() {
     return app.exec();
 }
 ```
-
+<!-- 
 ## 🗺️ Development Roadmap
 
 TUIKit is under active development, with future phases planned to enhance its capabilities:
@@ -133,4 +133,4 @@ Contributions are welcome! Please refer to the `CONTRIBUTING.md` file (to be cre
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is licensed under the MIT License - see the `LICENSE` file for details. -->
