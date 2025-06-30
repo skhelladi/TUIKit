@@ -1,121 +1,136 @@
-# TUIKit - A Modern TUI Framework for C++
+# TUIKit: A Qt-like Terminal User Interface Framework for C++
 
-TUIKit is a lightweight and modern framework designed to simplify the creation of Text-based User Interface (TUI) applications in C++. It is built on top of the powerful [FTXUI](https://github.com/ArthurSonzogni/ftxui) library and provides a higher-level API, inspired by graphical UI frameworks.
+## 🚀 Project Overview
 
-This project serves as a template and example for building complex and interactive applications directly in your terminal.
+TUIKit is a modern C++ framework designed to build rich and interactive Terminal User Interfaces (TUIs). Inspired by the simplicity and power of the Qt framework, TUIKit aims to provide a familiar development experience for creating command-line applications, especially suited for scientific and engineering projects.
 
-## Features
+## 🧩 Core Principles (Qt-like Philosophy)
 
-*   **Component-Oriented API:** Build interfaces by assembling reusable widgets (`TUIKButton`, `TUIKMenu`, `TUIKInput`, `TUIKPanel`, `TUIKSlider`, `TUIKTextArea`, `TUIKTreeView`, `TUIKTabbedPane`, `TUIKScrollableContainer`, etc.).
-*   **Flexible Layouts:** Organize your widgets vertically, horizontally, or in grids.
-*   **Intuitive Event Handling:** Use lambdas for simple and direct callbacks.
-*   **Theming System:** Easily customize the appearance of your application.
-*   **Integrated Dialogs & Notifications:** Display dialog boxes for information, warnings, errors, or confirmations, and non-modal notifications.
-*   **Simplified Build:** The CMake build system automatically handles downloading the FTXUI dependency.
+*   **Hierarchical Widgets:** Utilize a structured hierarchy of UI components (`TUIWidget`, `TUIForm`, `TUIMenu`, etc.).
+*   **Event Handling:** Manage user interactions through a signal/slot-like mechanism or callbacks.
+*   **Automatic Layouts:** Employ flexible layout managers (`TUIVBox`, `TUIHBox`) for responsive UI design.
+*   **Advanced Theming:** Customize colors, borders, and styles to create visually appealing interfaces.
 
-## Implemented Components
+## ✨ Implemented Components (Current State)
 
-Here's a list of the currently implemented components:
+Based on the `examples/main.cpp` and the current codebase, the following core components are implemented and functional:
 
-*   `Application`: The core class orchestrating the application.
-*   `ThemeManager`: Manages application themes.
-*   `MessageDialog`: For modal dialogs (info, warning, error, confirm).
-*   `Notification`: For non-modal, temporary messages.
-*   `WidgetBuilder`: A utility class for creating widget instances.
-*   `TUIKButton`: A styled button.
-*   `TUIKInput`: A styled text input field with validation.
-*   `TUIKTextArea`: A multi-line text input field.
-*   `TUIKCheckbox`: A styled checkbox.
-*   `TUIKRadiobox`: A styled radio button group.
-*   `TUIKMenu`: A styled selectable menu.
-*   `ProgressBar`: A visual progress bar.
-*   `TUIKSlider`: A component for selecting a value within a range.
-*   `TUIKPanel`: A container with a title and border.
-*   `TUIKTreeView`: For displaying hierarchical data.
-*   `TUIKTabbedPane`: A container with tabs to organize content.
-*   `TUIKScrollableContainer`: A container that allows scrolling its content.
+*   `TUIApp`: The entry point for the application.
+*   `TUIWidget`: Base class for all UI components.
+*   `TUILabel`: Displays static text.
+*   `TUITextField`: Editable single-line text input.
+*   `TUIButton`: Interactive button with click events and icon support.
+*   `TUIMenu`: Vertical list of selectable options.
+*   `TUICheckBox`: Simple toggle checkbox.
+*   `TUIRadioBox`: Group of exclusive radio buttons.
+*   `TUIComboBox`: Dropdown list for selection.
+*   `TUISlider`: Horizontal slider for continuous value selection.
+*   `TUIToolbar`: A bar for action buttons.
+*   `TUIForm`: Organizes input fields with labels.
+*   `TUIGroupBox`: Groups related widgets with an optional title and border.
+*   `TUITabWidget`: Organizes content into multiple tabs.
+*   `TUIStatusBar`: Displays status messages at the bottom of the application.
 
-## Planned/Future Components (Currently Commented Out)
+## 🛠️ Getting Started
 
-Some components are planned but currently commented out due to compatibility or implementation details with the current FTXUI version (v5.0.0). These include:
+### Prerequisites
 
-*   `TUIKTable` (FTXUI `Table` component not directly available/compatible)
-*   `TUIKActivityIndicator` (FTXUI `Spinner` component not directly available/compatible)
-*   `TUIKDatePicker` (FTXUI `DatePicker` component not directly available/compatible)
-*   `TUIKPasswordInput` (FTXUI `InputOption::Password()` not directly available/compatible)
+*   CMake (version 3.15 or higher)
+*   A C++17 compatible compiler (e.g., Clang, GCC)
 
-## Project Structure
+### Building the Project
 
-```
-.
-├── CMakeLists.txt        # Build configuration file
-├── example_usage.cpp     # A comprehensive example showcasing various features
-├── include/
-│   └── tuikit_framework.h # The main framework header
-├── src/
-│   └── tuikit_framework.cpp # The main framework implementation
-└── build/                  # Created by CMake, contains binaries
-```
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/your-repo/TUIKit.git # Replace with your actual repo URL
+    cd TUIKit
+    ```
 
-## Dependencies
+2.  **Create a build directory and configure CMake:**
+    ```bash
+    mkdir build
+    cd build
+    cmake ..
+    ```
 
-*   **C++17** (or newer)
-*   **CMake** (version 3.15 or newer)
-*   **FTXUI** (automatically downloaded by CMake)
+3.  **Build the project:**
+    ```bash
+    cmake --build .
+    ```
 
-## Compilation
+### Running the Example
 
-The following instructions will guide you through compiling the example application.
+After a successful build, you can run the example application:
 
 ```bash
-# 1. Clone the repository (if you haven't already)
-# git clone https://github.com/skhelladi/TUIKit.git
-# cd TUIKit
-
-# 2. Create a build directory
-mkdir -p build
-cd build
-
-# 3. Configure the project with CMake
-cmake ..
-
-# 4. Compile the project
-make
-
-# The executable will be in the build directory
-# ./example_usage
+./build/example_usage
 ```
 
-## Basic Usage
+## 🧪 Usage Example (Simplified)
 
-The framework revolves around the `Application` class.
-
-1.  **Create an `Application` instance**.
-2.  **Add pages to the application** using `app.add_page(name, component)`.
-3.  **Run the application** with `app.run()`.
+Here's a minimal example demonstrating how to create a simple TUI application with TUIKit:
 
 ```cpp
-#include "tuikit_framework.h"
+#include "tuikit.h"
+#include <memory>
 
 int main() {
-    TUIKIT::Application app("My App");
+    TUIKIT::TUIApp app("My Simple TUI App");
 
-    // Create a simple page
-    auto my_page = ftxui::Renderer([] {
-        return ftxui::text("Hello, TUIKIT!") | ftxui::border;
+    auto label = std::make_shared<TUIKIT::TUILabel>("Hello from TUIKit!");
+    auto button = std::make_shared<TUIKIT::TUIButton>("Click Me!");
+    button->onClick([&app]() {
+        app.show_message("Button Clicked!", "Info");
     });
 
-    app.add_page("Home", my_page);
-    app.run();
+    auto main_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    main_layout->addWidget(label);
+    main_layout->addWidget(button);
 
-    return 0;
+    app.setMainWidget(main_layout);
+    return app.exec();
 }
 ```
 
-## Author
+## 🗺️ Development Roadmap
 
-*   **Sofiane KHELLADI** ([sofiane@khelladi.page](mailto:sofiane@khelladi.page))
+TUIKit is under active development, with future phases planned to enhance its capabilities:
 
-## License
+### Phase 1: Foundation (MVP) - *Mostly Complete*
+*   CMake template + basic structure
+*   `TUIApp`, `TUIWidget` (base classes)
+*   `TUIMenu`, `TUIForm`, `TUILabel`, `TUITextField`
+*   Basic Layouts (`TUIVBox`, `TUIHBox`)
+*   Simple Styling System
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Phase 2: Enriched Widgets - *In Progress*
+*   `TUIComboBox`, `TUISpinBox`, `TUICheckBox`
+*   `TUIGroupBox` for sections
+*   `TUIToolbar` with action buttons
+*   First version of `TUIBarChart`
+
+### Phase 3: Advanced Visualization
+*   `TUILineChart`, `TUIHistogram`, `TUITable`
+*   `TUITree` for hierarchical navigation
+*   `TUITabWidget` for tabbed organization
+*   Advanced Theming System
+
+### Phase 4: Interactivity and Data Management
+*   JSON ↔ UI binding system
+*   `TUIProjectManager` for multiple projects
+*   Real-time field validation
+*   Multi-threading for long-running tasks
+
+### Phase 5: Scientific Specialization
+*   Specialized CFD/FEA widgets
+*   Plugin system
+*   Integration with external solvers
+*   Configuration export/import
+
+## 🤝 Contributing
+
+Contributions are welcome! Please refer to the `CONTRIBUTING.md` file (to be created) for guidelines on how to contribute to TUIKit.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.

@@ -1,0 +1,25 @@
+#pragma once
+
+// Main TUIKit include
+
+#include "tuikit/core/TUIApp.h"
+#include "tuikit/core/TUIWidget.h"
+#include "tuikit/core/TUIStyle.h"
+#include "tuikit/layouts/TUILayout.h"
+#include "tuikit/layouts/TUIHBoxLayout.h"
+#include "tuikit/layouts/TUIVBoxLayout.h"
+#include "tuikit/widgets/TUIButton.h"
+#include "tuikit/widgets/TUITextField.h"
+#include "tuikit/widgets/TUILabel.h"
+#include "tuikit/widgets/TUIMenu.h"
+#include "tuikit/widgets/TUICheckBox.h"
+#include "tuikit/widgets/TUIRadioBox.h"
+#include "tuikit/widgets/TUIComboBox.h"
+#include "tuikit/widgets/TUISlider.h"
+#include "tuikit/widgets/TUIResizableSplit.h"
+#include "tuikit/widgets/TUICollapsible.h"
+#include "tuikit/widgets/TUITabWidget.h"
+#include "tuikit/widgets/TUIGroupBox.h"
+#include "tuikit/widgets/TUIForm.h"
+#include "tuikit/widgets/TUIStatusBar.h"
+#include "tuikit/widgets/TUIToolbar.h"
