@@ -126,11 +126,11 @@ TUIKit is under active development, with future phases planned to enhance its ca
 *   Plugin system
 *   Integration with external solvers
 *   Configuration export/import
-
+-->
 ## 🤝 Contributing
 
 Contributions are welcome! Please refer to the `CONTRIBUTING.md` file (to be created) for guidelines on how to contribute to TUIKit.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details. -->
+This project is licensed under the MIT License - see the `LICENSE` file for details. 
