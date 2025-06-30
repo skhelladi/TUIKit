@@ -42,7 +42,7 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-repo/TUIKit.git # Replace with your actual repo URL
+    git clone https://github.com/skhelladi/TUIKit.git # Replace with your actual repo URL
     cd TUIKit
     ```
 
