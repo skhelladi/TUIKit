@@ -35,6 +35,7 @@ include_directories(external/json)
 # -----------------------------------------------------------------------------
 # Example usage in the project's CMakeLists.txt:
 # set(TUIKIT_UI examples/simple_ui.tuik path/to/other_ui.tuik)
+find_program(XXD_EXE xxd REQUIRED)
 if(NOT DEFINED TUIKIT_UI)
     set(TUIKIT_UI "${CMAKE_SOURCE_DIR}/examples/example_2.tuik")
 endif()
@@ -47,7 +48,7 @@ foreach(TUIK_FILE ${TUIKIT_UI})
     add_custom_command(
         OUTPUT ${HEADER_FILE}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${TUIK_DIR}
-        COMMAND xxd -i -n ${VAR_NAME} ${TUIK_FILE} > ${HEADER_FILE}
+        COMMAND ${XXD_EXE} -i -n ${VAR_NAME} ${TUIK_FILE} > ${HEADER_FILE}
         DEPENDS ${TUIK_FILE}
         COMMENT "Generating ${HEADER_FILE} from ${TUIK_FILE} with variable ${VAR_NAME}"
         VERBATIM
