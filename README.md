@@ -2,7 +2,7 @@
 
 ## 🚀 Project Overview
 
-TUIKit is a modern C++ framework designed to build rich and interactive Terminal User Interfaces (TUIs). Inspired by the simplicity and power of the Qt framework, TUIKit aims to provide a familiar development experience for creating command-line applications, especially suited for scientific and engineering projects.
+Based on [FTXUI](https://github.com/ArthurSonzogni/FTXUI), TUIKit is a modern C++ framework designed to build rich and interactive Terminal User Interfaces (TUIs). Inspired by the simplicity and power of the Qt framework, TUIKit aims to provide a familiar development experience for creating command-line applications, especially suited for scientific and engineering projects.
 
 ## 🧩 Core Principles (Qt-like Philosophy)
 
@@ -42,7 +42,7 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/skhelladi/TUIKit.git # Replace with your actual repo URL
+    git clone https://github.com/skhelladi/TUIKit.git
     cd TUIKit
     ```
 
