@@ -30,13 +30,18 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
 *   `TUIGroupBox`: Groups related widgets with an optional title and border.
 *   `TUITabWidget`: Organizes content into multiple tabs.
 *   `TUIStatusBar`: Displays status messages at the bottom of the application.
+*   `TUITreeView`: Displays hierarchical data in a tree structure.
 
 ## 🛠️ Getting Started
 
 ### Prerequisites
 
-*   CMake (version 3.15 or higher)
-*   A C++17 compatible compiler (e.g., Clang, GCC)
+*   **C++17 Compiler**: A compiler that supports C++17 (e.g., GCC, Clang, MSVC).
+*   **CMake**: Version 3.15 or higher.
+*   **FTXUI**: This project uses FTXUI as a dependency. You need to clone it into the `external/` directory:
+    ```bash
+    git clone https://github.com/ArthurSonzogni/FTXUI.git external/ftxui
+    ```
 
 ### Building the Project
 
@@ -66,26 +71,28 @@ After a successful build, you can run the example application:
 ./build/example_usage
 ```
 
-## 🧪 Usage Example (Simplified)
+## 🧪 Usage Example
 
-Here's a minimal example demonstrating how to create a simple TUI application with TUIKit:
+Here's a minimal example demonstrating how to create a simple TUI application with TUIKit, showcasing factory functions and the `connect` mechanism for event handling.
 
 ```cpp
 #include "tuikit.h"
-#include <memory>
+
+using namespace TUIKIT;
 
 int main() {
-    TUIKIT::TUIApp app("My Simple TUI App");
+    TUIApp app("My Simple TUI App");
 
-    auto label = std::make_shared<TUIKIT::TUILabel>("Hello from TUIKit!");
-    auto button = std::make_shared<TUIKIT::TUIButton>("Click Me!");
-    button->onClick([&app]() {
-        app.show_message("Button Clicked!", "Info");
+    auto main_layout = vbox();
+    
+    auto my_label = label("Hello from TUIKit!");
+    main_layout->addWidget(my_label);
+
+    auto my_button = button("Click Me!");
+    connect(my_button, [&] {
+        my_label->setText("Button Clicked!");
     });
-
-    auto main_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    main_layout->addWidget(label);
-    main_layout->addWidget(button);
+    main_layout->addWidget(my_button);
 
     app.setMainWidget(main_layout);
     return app.exec();
@@ -133,4 +140,4 @@ Contributions are welcome! Please refer to the `CONTRIBUTING.md` file (to be cre
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details. 
+This project is licensed under the MIT License - see the `LICENSE` file for details.
