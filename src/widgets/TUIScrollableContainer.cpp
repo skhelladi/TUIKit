@@ -1,7 +1,8 @@
-
 #include "tuikit/widgets/TUIScrollableContainer.h"
 #include <ftxui/component/component.hpp>
 #include <ftxui/dom/elements.hpp>
+#include <ftxui/component/event.hpp>
+#include <iostream> // For debug output
 
 namespace TUIKIT {
 

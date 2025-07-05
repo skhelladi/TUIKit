@@ -1,10 +1,21 @@
 #include "tuikit.h"
 #include "tuikit/core/TUIIcons.h"
+#include "tuikit/widgets/Notification.h"
+#include "tuikit/widgets/TUITreeView.h"
+#include "tuikit/widgets/TUIProgressBar.h"
+#include "tuikit/widgets/TUIScrollableContainer.h"
+#include "tuikit/widgets/TUIResizableSplit.h"
 #include <iostream>
 #include <string>
 #include <memory> // Required for std::shared_ptr
+#include <fstream> // Required for file redirection
 
 int main() {
+    // Redirect std::cerr to a file
+    std::ofstream cerr_log("debug_log.txt");
+    std::streambuf* old_cerr_buf = std::cerr.rdbuf();
+    std::cerr.rdbuf(cerr_log.rdbuf());
+
     TUIKIT::TUIApp app("My TUIKIT Application");
 
     // Labels for displaying widget states
@@ -37,6 +48,14 @@ int main() {
     input_button_group->addWidget(input_button_layout);
     input_button_group->addWidget(input_label);
     input_button_group->addWidget(button_label);
+
+    // Notification Example (placed in Main Widgets tab for easy access)
+    auto show_notification_button = std::make_shared<TUIKIT::TUIButton>("Show Notification");
+    show_notification_button->onClick([&app] {
+        TUIKIT::Notification::show(app, "Hello from TUIKIT!", "Info", 3000);
+    });
+    input_button_group->addWidget(show_notification_button);
+
     auto input_button_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Input & Button", input_button_group);
     main_widgets_content->addWidget(input_button_group_box);
 
@@ -161,7 +180,7 @@ int main() {
     status_group->addWidget(status_bar);
     status_group->addWidget(update_status_button);
     auto status_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Application Status", status_group);
-    form_status_tab_content->addWidget(status_group_box);
+    form_status_tab_content->addWidget(form_group_box);
 
     // --- Toolbar Tab Content ---
     auto toolbar_tab_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
@@ -173,6 +192,78 @@ int main() {
     auto toolbar_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Application Toolbar", toolbar);
     toolbar_tab_content->addWidget(toolbar_group_box);
 
+    // --- Advanced Widgets Tab Content ---
+    auto advanced_widgets_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
+
+    // TUITreeView Example
+    auto tree_view_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    TUIKIT::TreeNode root_tree_node = {"Root", {
+        {"Child 1", {}},
+        {"Child 2", {
+            {"Grandchild 2.1", {}},
+            {"Grandchild 2.2", {}}
+        }},
+        {"Child 3", {}}
+    }};
+    auto tree_view = std::make_shared<TUIKIT::TUITreeView>(root_tree_node);
+    auto tree_view_label = std::make_shared<TUIKIT::TUILabel>("Selected Tree Item: None");
+    tree_view->onSelect([&](const std::string& selected_node_text) {
+        tree_view_label->setText("Selected Tree Item: " + selected_node_text);
+    });
+    tree_view_group->addWidget(tree_view);
+    tree_view_group->addWidget(tree_view_label);
+    auto tree_view_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Tree View", tree_view_group);
+    advanced_widgets_content->addWidget(tree_view_group_box);
+
+    // TUIProgressBar Example
+    auto progress_bar_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    float progress_value = 0.0f;
+    auto progress_bar = std::make_shared<TUIKIT::TUIProgressBar>(progress_value / 100.0f); // Normalized value
+    auto progress_label = std::make_shared<TUIKIT::TUILabel>("Progress: 0%");
+    auto increment_progress_button = std::make_shared<TUIKIT::TUIButton>("Increment Progress");
+    increment_progress_button->onClick([&] {
+        progress_value += 10.0f; // Increment by 10%
+        if (progress_value > 100.0f) progress_value = 0.0f;
+        progress_bar->setValue(progress_value / 100.0f); // Normalized value
+        progress_label->setText("Progress: " + std::to_string(static_cast<int>(progress_value)) + "%");
+        app.request_redraw();
+    });
+    progress_bar_group->addWidget(progress_bar);
+    progress_bar_group->addWidget(progress_label);
+    progress_bar_group->addWidget(increment_progress_button);
+    auto progress_bar_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Progress Bar", progress_bar_group);
+    // advanced_widgets_content->addWidget(progress_bar_group_box); // Commented out for isolation
+
+    // TUIScrollableContainer Example
+    auto scrollable_content_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("This is a long text content inside a scrollable container."));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("You can scroll down to see more."));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 1"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 2"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 3"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 4"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 5"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 6"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 7"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 8"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 9"));
+    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 10"));
+    auto scrollable_container = std::make_shared<TUIKIT::TUIScrollableContainer>(scrollable_content_layout, 10);
+    auto scrollable_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Scrollable Container", scrollable_container);
+    // advanced_widgets_content->addWidget(scrollable_group_box); // Commented out for isolation
+
+    // TUIResizableSplit Example
+    auto split_left_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    split_left_content->addWidget(std::make_shared<TUIKIT::TUILabel>("Left Panel"));
+    split_left_content->addWidget(std::make_shared<TUIKIT::TUIButton>("Button A"));
+    auto split_right_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    split_right_content->addWidget(std::make_shared<TUIKIT::TUILabel>("Right Panel"));
+    split_right_content->addWidget(std::make_shared<TUIKIT::TUIButton>("Button B"));
+    auto resizable_split = std::make_shared<TUIKIT::TUIResizableSplit>(split_left_content, split_right_content, TUIKIT::TUIResizableSplit::Horizontal);
+    resizable_split->setMinimumSizes(20, 20);
+    auto resizable_split_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Resizable Split", resizable_split);
+    // advanced_widgets_content->addWidget(resizable_split_group_box); // Commented out for isolation
+
     // --- Tab Widget ---
     auto tab_widget = std::make_shared<TUIKIT::TUITabWidget>();
     tab_widget->addTab("Main Widgets", main_widgets_content, TUIKIT::ICON::Home);
@@ -180,6 +271,7 @@ int main() {
     tab_widget->addTab("Themes", theme_tab_content, TUIKIT::ICON::Themes);
     tab_widget->addTab("Form & Status", form_status_tab_content, TUIKIT::ICON::Tasks);
     tab_widget->addTab("Toolbar", toolbar_tab_content, TUIKIT::ICON::NewFile);
+    tab_widget->addTab("Advanced Widgets", advanced_widgets_content, TUIKIT::ICON::Tasks);
 
     // --- Main Layout ---
     auto main_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
@@ -187,9 +279,16 @@ int main() {
 
     app.setMainWidget(main_layout);
 
-    app.setOnExit([] {
+    app.setOnExit([&] {
         std::cerr << "Application is exiting. Goodbye!" << std::endl;
+        // Restore original cerr buffer
+        std::cerr.rdbuf(old_cerr_buf);
     });
 
-    return app.exec();
+    int result = app.exec();
+
+    // Restore original cerr buffer before exiting
+    std::cerr.rdbuf(old_cerr_buf);
+
+    return result;
 }

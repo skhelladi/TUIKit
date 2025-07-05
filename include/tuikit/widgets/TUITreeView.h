@@ -16,14 +16,18 @@ struct TreeNode {
 
 class TUITreeView : public TUIWidget {
 public:
+    using OnSelectCallback = std::function<void(const std::string&)>;
+
     TUITreeView(TreeNode root_node, TUIWidget* parent = nullptr);
     ~TUITreeView() override = default;
 
     ftxui::Component get_ftxui_component() override;
+    void onSelect(OnSelectCallback cb);
 
 private:
     TreeNode root_node_;
     ftxui::Component ftxui_tree_view_component_;
+    OnSelectCallback on_select_;
 
     ftxui::Component build_ftxui_tree_component(TreeNode& node);
 };

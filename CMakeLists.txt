@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
-project(TUIFramework VERSION 1.0.0 LANGUAGES CXX)
+project(TUIFramework VERSION 0.2 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Options de compilation
 if(MSVC)
     add_compile_options(/W4)
 else()
@@ -18,7 +17,7 @@ else()
 endif()
 
 # =============================================================================
-# DÉPENDANCES
+# DEPENDENCIES
 # =============================================================================
 
 # FTXUI
@@ -36,7 +35,7 @@ if(NOT ftxui_POPULATED)
 endif()
 
 # =============================================================================
-# STRUCTURE DU PROJET
+# PROJECT STRUCTURE
 # =============================================================================
 
 # Headers
