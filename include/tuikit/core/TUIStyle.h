@@ -9,7 +9,6 @@ namespace TUIKIT {
 
 // Enum for predefined themes
 enum class Theme {
-    Default,
     Dark,
     Light,
     Monokai,

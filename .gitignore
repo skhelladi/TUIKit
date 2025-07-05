@@ -1,4 +1,5 @@
 /archives
-/build
+/build/
+/external/
 /docs
 /log.txt

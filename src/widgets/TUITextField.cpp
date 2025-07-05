@@ -3,7 +3,7 @@
 
 namespace TUIKIT {
 
-TUITextField::TUITextField(const std::string& placeholder, TUIWidget* parent)
+TUITextField::TUITextField(const std::string& /*placeholder*/, TUIWidget* parent)
     : TUIWidget(parent) {
 }
 

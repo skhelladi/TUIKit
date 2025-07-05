@@ -21,8 +21,8 @@ public:
     const std::string& icon() const;
 
 private:
-    std::string text_; // This will hold the text displayed by the FTXUI button (icon + original_text_)
     std::string original_text_; // This will hold the text provided by the user, without the icon
+    std::string text_; // This will hold the text displayed by the FTXUI button (icon + original_text_)
     std::string icon_;
     OnClickedCallback on_clicked_;
     ftxui::Component ftxui_button_component_;

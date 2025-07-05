@@ -1,14 +1,11 @@
 #include "tuikit.h"
 #include "tuikit/core/TUIIcons.h"
 #include "tuikit/widgets/Notification.h"
-#include "tuikit/widgets/TUITreeView.h"
-#include "tuikit/widgets/TUIProgressBar.h"
-#include "tuikit/widgets/TUIScrollableContainer.h"
-#include "tuikit/widgets/TUIResizableSplit.h"
 #include <iostream>
 #include <string>
-#include <memory> // Required for std::shared_ptr
 #include <fstream> // Required for file redirection
+
+using namespace TUIKIT;
 
 int main() {
     // Redirect std::cerr to a file
@@ -16,188 +13,153 @@ int main() {
     std::streambuf* old_cerr_buf = std::cerr.rdbuf();
     std::cerr.rdbuf(cerr_log.rdbuf());
 
-    TUIKIT::TUIApp app("My TUIKIT Application");
+    TUIApp app("My TUIKIT Application");
 
     // Labels for displaying widget states
-    auto input_label = std::make_shared<TUIKIT::TUILabel>("Input: ");
-    auto button_label = std::make_shared<TUIKIT::TUILabel>("Button clicked: No");
-    auto menu_label = std::make_shared<TUIKIT::TUILabel>("Selected Menu Item: None");
-    auto checkbox_label = std::make_shared<TUIKIT::TUILabel>("Checkbox: Off");
-    auto radiobox_label = std::make_shared<TUIKIT::TUILabel>("Selected Radio Option: None");
-    auto combobox_label = std::make_shared<TUIKIT::TUILabel>("Selected ComboBox Option: None");
-    auto slider_label = std::make_shared<TUIKIT::TUILabel>("Slider Value: 0.0");
+    auto input_label = label("Input: ");
+    auto button_label = label("Button clicked: No");
+    auto menu_label = label("Selected Menu Item: None");
+    auto checkbox_label = label("Checkbox: Off");
+    auto radiobox_label = label("Selected Radio Option: None");
+    auto combobox_label = label("Selected ComboBox Option: None");
+    auto slider_label = label("Slider Value: 0.0");
 
     // --- Main Widgets Tab Content ---
-    auto main_widgets_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto main_widgets_content = vbox();
 
     // Input & Button Group
-    auto input_button_layout = std::make_shared<TUIKIT::TUIHBoxLayout>();
-    auto text_field = std::make_shared<TUIKIT::TUITextField>("Enter text here");
-    text_field->onChange([&](const std::string& new_text) {
+    auto input_button_layout = hbox();
+    auto text_field_widget = textfield("Enter text here");
+    text_field_widget->onChange([&](const std::string& new_text) {
         input_label->setText("Input: " + new_text);
     });
-    auto button = std::make_shared<TUIKIT::TUIButton>("Show Input");
-    button->setIcon(TUIKIT::ICON::Rocket);
-    button->onClick([&] {
-        button_label->setText("Button clicked: Yes. Current input: " + text_field->text());
+    auto button_widget = button("Show Input");
+    button_widget->setIcon(ICON::Rocket);
+    button_widget->onClick([&] {
+        button_label->setText("Button clicked: Yes. Current input: " + text_field_widget->text());
     });
-    input_button_layout->addWidget(text_field);
-    input_button_layout->addWidget(button);
+    input_button_layout->addWidget(text_field_widget);
+    input_button_layout->addWidget(button_widget);
 
-    auto input_button_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto input_button_group = vbox();
     input_button_group->addWidget(input_button_layout);
     input_button_group->addWidget(input_label);
     input_button_group->addWidget(button_label);
 
-    // Notification Example (placed in Main Widgets tab for easy access)
-    auto show_notification_button = std::make_shared<TUIKIT::TUIButton>("Show Notification");
+    // Notification Example
+    auto show_notification_button = button("Show Notification");
     show_notification_button->onClick([&app] {
-        TUIKIT::Notification::show(app, "Hello from TUIKIT!", "Info", 3000);
+        Notification::show(app, "Hello from TUIKIT!", "Info", 3000);
     });
     input_button_group->addWidget(show_notification_button);
 
-    auto input_button_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Input & Button", input_button_group);
-    main_widgets_content->addWidget(input_button_group_box);
+    main_widgets_content->addWidget(groupbox("Input & Button", input_button_group));
 
     // Selection Widgets Group
-    auto selection_widgets_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto selection_widgets_layout = vbox();
 
     std::vector<std::string> menu_options = {"Option 1", "Option 2", "Option 3"};
-    auto menu = std::make_shared<TUIKIT::TUIMenu>(menu_options);
-    std::vector<std::string> menu_icons = {TUIKIT::ICON::NewFile, TUIKIT::ICON::Open, TUIKIT::ICON::Tasks};
-    menu->setIcons(menu_icons);
-    menu->onSelect([&](int selected_index) {
-        menu_label->setText("Selected Menu Item: " + menu->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
+    auto menu_widget = menu(menu_options);
+    std::vector<std::string> menu_icons = {ICON::NewFile, ICON::Open, ICON::Tasks};
+    menu_widget->setIcons(menu_icons);
+    menu_widget->onSelect([&](int selected_index) {
+        menu_label->setText("Selected Menu Item: " + menu_widget->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
     });
-    selection_widgets_layout->addWidget(menu);
+    selection_widgets_layout->addWidget(menu_widget);
     selection_widgets_layout->addWidget(menu_label);
 
-    auto checkbox = std::make_shared<TUIKIT::TUICheckBox>("Enable Feature");
-    checkbox->onChange([&](bool checked) {
+    auto checkbox_widget = checkbox("Enable Feature");
+    checkbox_widget->onChange([&](bool checked) {
         checkbox_label->setText("Checkbox: " + std::string(checked ? "On" : "Off"));
     });
-    selection_widgets_layout->addWidget(checkbox);
+    selection_widgets_layout->addWidget(checkbox_widget);
     selection_widgets_layout->addWidget(checkbox_label);
 
     std::vector<std::string> radio_options = {"Red", "Green", "Blue"};
-    auto radiobox = std::make_shared<TUIKIT::TUIRadioBox>(radio_options);
-    radiobox->onSelect([&](int selected_index) {
-        radiobox_label->setText("Selected Radio Option: " + radiobox->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
+    auto radiobox_widget = radiobox(radio_options);
+    radiobox_widget->onSelect([&](int selected_index) {
+        radiobox_label->setText("Selected Radio Option: " + radiobox_widget->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
     });
-    selection_widgets_layout->addWidget(radiobox);
+    selection_widgets_layout->addWidget(radiobox_widget);
     selection_widgets_layout->addWidget(radiobox_label);
 
     std::vector<std::string> combobox_options = {"Apple", "Banana", "Cherry"};
-    auto combobox = std::make_shared<TUIKIT::TUIComboBox>(combobox_options);
-    combobox->onSelect([&](int selected_index) {
-        combobox_label->setText("Selected ComboBox Option: " + combobox->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
+    auto combobox_widget = combobox(combobox_options);
+    combobox_widget->onSelect([&](int selected_index) {
+        combobox_label->setText("Selected ComboBox Option: " + combobox_widget->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
         app.request_redraw();
     });
-    selection_widgets_layout->addWidget(combobox);
+    selection_widgets_layout->addWidget(combobox_widget);
     selection_widgets_layout->addWidget(combobox_label);
 
-    auto selection_widgets_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Selection Widgets", selection_widgets_layout);
-    main_widgets_content->addWidget(selection_widgets_group_box);
+    main_widgets_content->addWidget(groupbox("Selection Widgets", selection_widgets_layout));
 
     // Slider Group
     float slider_value = 0.0f;
-    auto slider = std::make_shared<TUIKIT::TUISlider>("Volume", slider_value, 0.0f, 100.0f, 1.0f);
-    slider->onChange([&](float value) {
+    auto slider_widget = slider("Volume", slider_value, 0.0f, 100.0f, 1.0f);
+    slider_widget->onChange([&](float value) {
         slider_label->setText("Slider Value: " + std::to_string(static_cast<int>(value)));
         app.request_redraw();
     });
-    auto slider_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    slider_group->addWidget(slider);
+    auto slider_group = vbox();
+    slider_group->addWidget(slider_widget);
     slider_group->addWidget(slider_label);
-    auto slider_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Slider", slider_group);
-    main_widgets_content->addWidget(slider_group_box);
+    main_widgets_content->addWidget(groupbox("Slider", slider_group));
 
     // --- Collapsible Tab Content ---
-    auto collapsible_section_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    collapsible_section_content->addWidget(std::make_shared<TUIKIT::TUILabel>("This is inside a collapsible section."));
-    collapsible_section_content->addWidget(std::make_shared<TUIKIT::TUILabel>("Expand me to see more!"));
-    collapsible_section_content->addWidget(std::make_shared<TUIKIT::TUIButton>("Toggle Me"));
-    auto collapsible = std::make_shared<TUIKIT::TUICollapsible>("Advanced Options", collapsible_section_content);
-    auto collapsible_tab_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    collapsible_tab_content->addWidget(collapsible);
+    auto collapsible_section_content = vbox();
+    collapsible_section_content->addWidget(label("This is inside a collapsible section."));
+    collapsible_section_content->addWidget(label("Expand me to see more!"));
+    collapsible_section_content->addWidget(button("Toggle Me"));
+    auto collapsible_widget = collapsible("Advanced Options", collapsible_section_content);
+    auto collapsible_tab_content = vbox();
+    collapsible_tab_content->addWidget(collapsible_widget);
 
     // --- Themes Tab Content ---
-    auto theme_tab_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    auto theme_label = std::make_shared<TUIKIT::TUILabel>("Select Theme:");
+    auto theme_tab_content = vbox();
+    auto theme_label = label("Change the global theme of the application.");
+    theme_tab_content->addWidget(theme_label);
+    theme_tab_content->addWidget(label("Select Theme:"));
     std::vector<std::string> theme_options = {"Dark", "Light", "Monokai", "Solarized", "Dracula", "Nord", "Blueberry", "GitHub", "Material", "MaterialDark", "MaterialLight", "MaterialBlue"};
-    int selected_theme = 0; // Default: Dark
-    auto theme_combobox = std::make_shared<TUIKIT::TUIComboBox>(theme_options, selected_theme);
+    auto theme_combobox = combobox(theme_options, 0);
     theme_combobox->onSelect([&](int idx) {
-        if (theme_options[idx] == "Dark")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Dark);
-        else if (theme_options[idx] == "Light")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Light);
-        else if (theme_options[idx] == "Monokai")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Monokai);
-        else if (theme_options[idx] == "Solarized")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Solarized);
-        else if (theme_options[idx] == "Dracula")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Dracula);
-        else if (theme_options[idx] == "Nord")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Nord);
-        else if (theme_options[idx] == "Blueberry")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Blueberry);
-        else if (theme_options[idx] == "GitHub")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::GitHub);
-        else if (theme_options[idx] == "Material")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::Material);
-        else if (theme_options[idx] == "MaterialDark")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::MaterialDark);
-        else if (theme_options[idx] == "MaterialLight")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::MaterialLight);
-        else if (theme_options[idx] == "MaterialBlue")
-            TUIKIT::TUIStyle::instance().setGlobalTheme(TUIKIT::Theme::MaterialBlue);
+        TUIStyle::instance().setGlobalTheme(static_cast<Theme>(idx));
         app.request_redraw();
     });
-    theme_tab_content->addWidget(theme_label);
     theme_tab_content->addWidget(theme_combobox);
 
     // --- Form & Status Tab Content ---
-    auto form_status_tab_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto form_status_tab_content = vbox();
+    auto form_widget = form();
+    form_widget->addField("Name:", textfield("Your Name"));
+    form_widget->addField("Email:", textfield("Your Email"));
+    form_status_tab_content->addWidget(groupbox("User Information", form_widget));
 
-    // Form Group
-    auto form = std::make_shared<TUIKIT::TUIForm>();
-    auto form_name_field = std::make_shared<TUIKIT::TUITextField>("Your Name");
-    auto form_email_field = std::make_shared<TUIKIT::TUITextField>("Your Email");
-    form->addField("Name:", form_name_field);
-    form->addField("Email:", form_email_field);
-    auto form_group_box = std::make_shared<TUIKIT::TUIGroupBox>("User Information", form);
-    form_status_tab_content->addWidget(form_group_box);
-
-    // Status Bar Group
-    auto status_bar = std::make_shared<TUIKIT::TUIStatusBar>("Application Ready.");
-    auto update_status_button = std::make_shared<TUIKIT::TUIButton>("Update Status");
+    auto status_bar = statusbar("Application Ready.");
+    auto update_status_button = button("Update Status");
     update_status_button->onClick([&] {
         static int status_count = 0;
         status_bar->setMessage("Status updated: " + std::to_string(++status_count));
     });
-    auto status_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto status_group = vbox();
     status_group->addWidget(status_bar);
     status_group->addWidget(update_status_button);
-    auto status_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Application Status", status_group);
-    form_status_tab_content->addWidget(form_group_box);
+    form_status_tab_content->addWidget(groupbox("Application Status", status_group));
 
     // --- Toolbar Tab Content ---
-    auto toolbar_tab_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    auto toolbar = std::make_shared<TUIKIT::TUIToolbar>();
-    toolbar->addButton("New", [] { std::cerr << "New button clicked!" << std::endl; }, TUIKIT::ICON::NewFile);
-    toolbar->addButton("Save", [] { std::cerr << "Save button clicked!" << std::endl; }, TUIKIT::ICON::Save);
-    toolbar->addButton("Load", [] { std::cerr << "Load button clicked!" << std::endl; }, TUIKIT::ICON::Open);
-    toolbar->addButton("Quit", [&app] { app.exit(); }, TUIKIT::ICON::Quit);
-    auto toolbar_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Application Toolbar", toolbar);
-    toolbar_tab_content->addWidget(toolbar_group_box);
+    auto toolbar_tab_content = vbox();
+    auto toolbar_widget = toolbar();
+    toolbar_widget->addButton("New", [] { std::cerr << "New button clicked!" << std::endl; }, ICON::NewFile);
+    toolbar_widget->addButton("Save", [] { std::cerr << "Save button clicked!" << std::endl; }, ICON::Save);
+    toolbar_widget->addButton("Load", [] { std::cerr << "Load button clicked!" << std::endl; }, ICON::Open);
+    toolbar_widget->addButton("Quit", [&app] { app.exit(); }, ICON::Quit);
+    toolbar_tab_content->addWidget(groupbox("Application Toolbar", toolbar_widget));
 
     // --- Advanced Widgets Tab Content ---
-    auto advanced_widgets_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto advanced_widgets_content = vbox();
 
     // TUITreeView Example
-    auto tree_view_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    TUIKIT::TreeNode root_tree_node = {"Root", {
+    TreeNode root_tree_node = {"Root", {
         {"Child 1", {}},
         {"Child 2", {
             {"Grandchild 2.1", {}},
@@ -205,89 +167,38 @@ int main() {
         }},
         {"Child 3", {}}
     }};
-    auto tree_view = std::make_shared<TUIKIT::TUITreeView>(root_tree_node);
-    auto tree_view_label = std::make_shared<TUIKIT::TUILabel>("Selected Tree Item: None");
+    auto tree_view = treeview(root_tree_node);
+    auto tree_view_label = label("Selected Tree Item: None");
     tree_view->onSelect([&](const std::string& selected_node_text) {
         tree_view_label->setText("Selected Tree Item: " + selected_node_text);
     });
+    auto tree_view_group = vbox();
     tree_view_group->addWidget(tree_view);
     tree_view_group->addWidget(tree_view_label);
-    auto tree_view_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Tree View", tree_view_group);
-    advanced_widgets_content->addWidget(tree_view_group_box);
-
-    // TUIProgressBar Example
-    auto progress_bar_group = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    float progress_value = 0.0f;
-    auto progress_bar = std::make_shared<TUIKIT::TUIProgressBar>(progress_value / 100.0f); // Normalized value
-    auto progress_label = std::make_shared<TUIKIT::TUILabel>("Progress: 0%");
-    auto increment_progress_button = std::make_shared<TUIKIT::TUIButton>("Increment Progress");
-    increment_progress_button->onClick([&] {
-        progress_value += 10.0f; // Increment by 10%
-        if (progress_value > 100.0f) progress_value = 0.0f;
-        progress_bar->setValue(progress_value / 100.0f); // Normalized value
-        progress_label->setText("Progress: " + std::to_string(static_cast<int>(progress_value)) + "%");
-        app.request_redraw();
-    });
-    progress_bar_group->addWidget(progress_bar);
-    progress_bar_group->addWidget(progress_label);
-    progress_bar_group->addWidget(increment_progress_button);
-    auto progress_bar_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Progress Bar", progress_bar_group);
-    // advanced_widgets_content->addWidget(progress_bar_group_box); // Commented out for isolation
-
-    // TUIScrollableContainer Example
-    auto scrollable_content_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("This is a long text content inside a scrollable container."));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("You can scroll down to see more."));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 1"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 2"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 3"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 4"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 5"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 6"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 7"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 8"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 9"));
-    scrollable_content_layout->addWidget(std::make_shared<TUIKIT::TUILabel>("Line 10"));
-    auto scrollable_container = std::make_shared<TUIKIT::TUIScrollableContainer>(scrollable_content_layout, 10);
-    auto scrollable_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Scrollable Container", scrollable_container);
-    // advanced_widgets_content->addWidget(scrollable_group_box); // Commented out for isolation
-
-    // TUIResizableSplit Example
-    auto split_left_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    split_left_content->addWidget(std::make_shared<TUIKIT::TUILabel>("Left Panel"));
-    split_left_content->addWidget(std::make_shared<TUIKIT::TUIButton>("Button A"));
-    auto split_right_content = std::make_shared<TUIKIT::TUIVBoxLayout>();
-    split_right_content->addWidget(std::make_shared<TUIKIT::TUILabel>("Right Panel"));
-    split_right_content->addWidget(std::make_shared<TUIKIT::TUIButton>("Button B"));
-    auto resizable_split = std::make_shared<TUIKIT::TUIResizableSplit>(split_left_content, split_right_content, TUIKIT::TUIResizableSplit::Horizontal);
-    resizable_split->setMinimumSizes(20, 20);
-    auto resizable_split_group_box = std::make_shared<TUIKIT::TUIGroupBox>("Resizable Split", resizable_split);
-    // advanced_widgets_content->addWidget(resizable_split_group_box); // Commented out for isolation
+    advanced_widgets_content->addWidget(groupbox("Tree View", tree_view_group));
 
     // --- Tab Widget ---
-    auto tab_widget = std::make_shared<TUIKIT::TUITabWidget>();
-    tab_widget->addTab("Main Widgets", main_widgets_content, TUIKIT::ICON::Home);
-    tab_widget->addTab("Collapsible", collapsible_tab_content, TUIKIT::ICON::Collapsible);
-    tab_widget->addTab("Themes", theme_tab_content, TUIKIT::ICON::Themes);
-    tab_widget->addTab("Form & Status", form_status_tab_content, TUIKIT::ICON::Tasks);
-    tab_widget->addTab("Toolbar", toolbar_tab_content, TUIKIT::ICON::NewFile);
-    tab_widget->addTab("Advanced Widgets", advanced_widgets_content, TUIKIT::ICON::Tasks);
+    auto tab_widget = tabwidget();
+    tab_widget->addTab("Main Widgets", main_widgets_content, ICON::Home);
+    tab_widget->addTab("Collapsible", collapsible_tab_content, ICON::Collapsible);
+    tab_widget->addTab("Themes", theme_tab_content, ICON::Themes);
+    tab_widget->addTab("Form & Status", form_status_tab_content, ICON::Tasks);
+    tab_widget->addTab("Toolbar", toolbar_tab_content, ICON::NewFile);
+    tab_widget->addTab("Advanced Widgets", advanced_widgets_content, ICON::Tasks);
 
     // --- Main Layout ---
-    auto main_layout = std::make_shared<TUIKIT::TUIVBoxLayout>();
+    auto main_layout = vbox();
     main_layout->addWidget(tab_widget);
 
     app.setMainWidget(main_layout);
 
     app.setOnExit([&] {
         std::cerr << "Application is exiting. Goodbye!" << std::endl;
-        // Restore original cerr buffer
         std::cerr.rdbuf(old_cerr_buf);
     });
 
     int result = app.exec();
 
-    // Restore original cerr buffer before exiting
     std::cerr.rdbuf(old_cerr_buf);
 
     return result;

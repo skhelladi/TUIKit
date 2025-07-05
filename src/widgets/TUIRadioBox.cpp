@@ -23,7 +23,7 @@ int TUIRadioBox::selectedIndex() const {
 }
 
 std::string TUIRadioBox::selectedText() const {
-    if (selected_index_ >= 0 && selected_index_ < options_.size()) {
+    if (selected_index_ >= 0 && static_cast<size_t>(selected_index_) < options_.size()) {
         return options_[selected_index_];
     }
     return "";
@@ -34,7 +34,7 @@ ftxui::Component TUIRadioBox::get_ftxui_component() {
 }
 
 void TUIRadioBox::setSelectedIndex(int index) {
-    if (index >= 0 && index < options_.size()) {
+    if (index >= 0 && static_cast<size_t>(index) < options_.size()) {
         selected_index_ = index;
         // Force update of the FTXUI component to reflect the new selection
         update_ftxui_radiobox_component();

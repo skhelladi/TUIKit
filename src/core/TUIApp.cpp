@@ -154,7 +154,7 @@ int TUIApp::exec() {
         if (show_modal_) {
             return modal_->OnEvent(event);
         } else {
-            if (!pages_.empty() && active_page_ >= 0 && active_page_ < pages_.size()) {
+            if (!pages_.empty() && active_page_ >= 0 && static_cast<size_t>(active_page_) < pages_.size()) {
                 ftxui::Component active_page_component = pages_[active_page_];
                 if (active_page_component->OnEvent(event)) {
                     return true;
@@ -198,7 +198,7 @@ void TUIApp::add_page(const std::string& name, ftxui::Component page) {
 }
 
 void TUIApp::set_active_page(int index) {
-    if (index >= 0 && index < pages_.size()) {
+    if (index >= 0 && static_cast<size_t>(index) < pages_.size()) {
         active_page_ = index;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace TUIKIT {
 
-TUIWidget::TUIWidget(TUIWidget* parent) {}
+TUIWidget::TUIWidget(TUIWidget* /*parent*/) {}
 
 TUIWidget::~TUIWidget() {}
 
