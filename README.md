@@ -94,6 +94,12 @@ int main() {
     connect(my_button, [&] {
         my_label->setText("Button Clicked!");
     });
+    
+    // or you can use a lambda function directly
+    // my_button->onClick([]() {
+    //     my_label->setText("Button Clicked!");
+    // });
+
     main_layout->addWidget(my_button);
 
     app.setMainWidget(main_layout);
