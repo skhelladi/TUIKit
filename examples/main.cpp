@@ -178,13 +178,13 @@ int main() {
 
     // TUITreeView Example
     TreeNode root_tree_node = {"Root", {
-        {"Child 1", {}},
+        {"Child 1", {}, false, nullptr},
         {"Child 2", {
-            {"Grandchild 2.1", {}},
-            {"Grandchild 2.2", {}}
-        }},
-        {"Child 3", {}}
-    }};
+            {"Grandchild 2.1", {}, false, nullptr},
+            {"Grandchild 2.2", {}, false, nullptr}
+        }, false, nullptr},
+        {"Child 3", {}, false, nullptr}
+    }, false, nullptr};
     auto tree_view = treeview(root_tree_node);
     auto tree_view_label = label("Selected Tree Item: None");
     tree_view->onSelect([&](const std::string& selected_node_text) {
@@ -194,6 +194,29 @@ int main() {
     tree_view_group->addWidget(tree_view);
     tree_view_group->addWidget(tree_view_label);
     advanced_widgets_content->addWidget(groupbox("Tree View", tree_view_group));
+
+    // TUIResizableSplit Example
+    auto left_panel = label("Left Panel");
+    auto right_panel = label("Right Panel");
+    auto resizable_split_widget = resizable_split(left_panel, right_panel, TUIResizableSplit::Horizontal);
+    advanced_widgets_content->addWidget(groupbox("Resizable Split", resizable_split_widget));
+
+    // TUIScrollableContainer Example
+    std::vector<std::string> scroll_items;
+    for (int i = 0; i < 20; ++i) {
+        scroll_items.push_back("Scrollable Item " + std::to_string(i));
+    }
+    auto scroll_menu = menu(scroll_items);
+    auto scroll_selected_label = label("Selected: None");
+    connect(scroll_menu, [&](int idx) {
+        if (idx >= 0 && idx < (int)scroll_items.size())
+            scroll_selected_label->setText("Selected: " + scroll_items[idx]);
+    });
+    auto scrollable_container_widget = scrollable_container(scroll_menu, 10);
+    auto scrollable_group = vbox();
+    scrollable_group->addWidget(scrollable_container_widget);
+    scrollable_group->addWidget(scroll_selected_label);
+    advanced_widgets_content->addWidget(groupbox("Scrollable Container", scrollable_group));
 
     // --- Tab Widget ---
     auto tab_widget = tabwidget();

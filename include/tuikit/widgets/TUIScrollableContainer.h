@@ -15,6 +15,7 @@ public:
 private:
     std::shared_ptr<TUIWidget> content_;
     int height_;
+    int scroll_position_ = 0;
 };
 
 } // namespace TUIKIT

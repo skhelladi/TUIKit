@@ -31,6 +31,8 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
 *   `TUITabWidget`: Organizes content into multiple tabs.
 *   `TUIStatusBar`: Displays status messages at the bottom of the application.
 *   `TUITreeView`: Displays hierarchical data in a tree structure.
+*   `TUIResizableSplit`: Splitter for resizable panels (horizontal/vertical).
+*   `TUIScrollableContainer`: Scrollable area for any widget (with scrollbar, keyboard and mouse support).
 
 ## 🛠️ Getting Started
 
