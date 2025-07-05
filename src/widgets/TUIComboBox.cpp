@@ -3,8 +3,8 @@
 
 namespace TUIKIT {
 
-TUIComboBox::TUIComboBox(const std::vector<std::string>& options, int initial_selected, TUIWidget* parent)
-    : TUIWidget(parent), options_(options), selected_index_(initial_selected), last_known_index_(initial_selected) {
+TUIComboBox::TUIComboBox(const std::vector<std::string>& options, int initial_selected, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Dropdown(&options_, &selected_index_)), options_(options), selected_index_(initial_selected), last_known_index_(initial_selected) {
     update_ftxui_dropdown_component();
 }
 
@@ -36,10 +36,6 @@ std::string TUIComboBox::selectedText() const {
     return "";
 }
 
-ftxui::Component TUIComboBox::get_ftxui_component() {
-    return ftxui_dropdown_component_;
-}
-
 void TUIComboBox::setSelectedIndex(int index) {
     if (index >= 0 && static_cast<size_t>(index) < options_.size()) {
         selected_index_ = index;
@@ -50,15 +46,15 @@ void TUIComboBox::setSelectedIndex(int index) {
 }
 
 void TUIComboBox::update_ftxui_dropdown_component() {
-    ftxui_dropdown_component_ = ftxui::Dropdown(&options_, &selected_index_);
-    ftxui_dropdown_component_ = ftxui::Renderer(ftxui_dropdown_component_, [this] {
+    component_ = ftxui::Dropdown(&options_, &selected_index_);
+    component_ = ftxui::Renderer(component_, [this] {
         if (last_known_index_ != selected_index_) {
             last_known_index_ = selected_index_;
             if (on_select_) {
                 on_select_(selected_index_);
             }
         }
-        return ftxui_dropdown_component_->Render();
+        return component_->Render();
     });
 }
 

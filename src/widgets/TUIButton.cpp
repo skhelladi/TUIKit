@@ -4,19 +4,10 @@
 
 namespace TUIKIT {
 
-TUIButton::TUIButton(const std::string& text, TUIWidget* parent)
-    : TUIWidget(parent), original_text_(text), text_(text) {
-    ftxui_button_component_ = ftxui::Button(&text_, [this] { 
+TUIButton::TUIButton(const std::string& text, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Button(&text_, [this] { 
         if (on_clicked_) on_clicked_(); 
-    });
-}
-
-ftxui::Component TUIButton::get_ftxui_component() {
-    return ftxui::Renderer(ftxui_button_component_, [this] {
-        auto& theme = TUIStyle::instance().currentTheme();
-        return ftxui_button_component_->Render() | ftxui::color(theme.text) | ftxui::bgcolor(theme.primary);
-    });
-}
+    })), original_text_(text), text_(text) {}
 
 void TUIButton::onClick(OnClickedCallback callback) {
     on_clicked_ = callback;
@@ -25,7 +16,8 @@ void TUIButton::onClick(OnClickedCallback callback) {
 void TUIButton::setIcon(const std::string& icon) {
     icon_ = icon;
     text_ = icon_ + " " + original_text_;
-    ftxui_button_component_ = ftxui::Button(&text_, [this] { 
+    // Recreate the FTXUI component with the new text
+    component_ = ftxui::Button(&text_, [this] { 
         if (on_clicked_) on_clicked_(); 
     });
 }

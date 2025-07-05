@@ -3,13 +3,9 @@
 
 namespace TUIKIT {
 
-TUIMenu::TUIMenu(const std::vector<std::string>& options, TUIWidget* parent)
-    : TUIWidget(parent), options_(options) {
+TUIMenu::TUIMenu(const std::vector<std::string>& options, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Menu(&options_, &selected_index_)), options_(options) {
     update_ftxui_menu_component();
-}
-
-ftxui::Component TUIMenu::get_ftxui_component() {
-    return ftxui_menu_component_;
 }
 
 void TUIMenu::setOptions(const std::vector<std::string>& options) {
@@ -62,9 +58,9 @@ void TUIMenu::update_ftxui_menu_component() {
                 options_with_icons_cache_.push_back(options_[i]);
             }
         }
-        ftxui_menu_component_ = ftxui::Menu(&options_with_icons_cache_, &selected_index_, option);
+        component_ = ftxui::Menu(&options_with_icons_cache_, &selected_index_, option);
     } else {
-        ftxui_menu_component_ = ftxui::Menu(&options_, &selected_index_, option);
+        component_ = ftxui::Menu(&options_, &selected_index_, option);
     }
 }
 

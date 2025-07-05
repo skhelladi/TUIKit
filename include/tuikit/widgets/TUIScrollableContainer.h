@@ -12,12 +12,9 @@ public:
     TUIScrollableContainer(std::shared_ptr<TUIWidget> content, int height, TUIWidget* parent = nullptr);
     ~TUIScrollableContainer() override = default;
 
-    ftxui::Component get_ftxui_component() override;
-
 private:
     std::shared_ptr<TUIWidget> content_;
     int height_;
-    ftxui::Component ftxui_scrollable_component_;
 };
 
 } // namespace TUIKIT

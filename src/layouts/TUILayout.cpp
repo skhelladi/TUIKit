@@ -2,6 +2,6 @@
 
 namespace TUIKIT {
 
-TUILayout::TUILayout(TUIWidget* parent) : TUIWidget(parent) {}
+TUILayout::TUILayout(ftxui::Component component) : TUIWidget(component) {}
 
 } // namespace TUIKIT

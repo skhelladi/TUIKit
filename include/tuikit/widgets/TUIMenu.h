@@ -16,8 +16,6 @@ public:
     TUIMenu(const std::vector<std::string>& options, TUIWidget* parent = nullptr);
     ~TUIMenu() override = default;
 
-    ftxui::Component get_ftxui_component() override;
-
     void setOptions(const std::vector<std::string>& options);
     void setIcons(const std::vector<std::string>& icons); // Associe une icône à chaque option
     void onSelect(OnSelectCallback callback);
@@ -31,7 +29,6 @@ private:
     std::vector<std::string> options_with_icons_cache_; // New member to store combined options
     int selected_index_ = 0;
     OnSelectCallback on_select_callback_;
-    ftxui::Component ftxui_menu_component_;
 
     void update_ftxui_menu_component();
 };

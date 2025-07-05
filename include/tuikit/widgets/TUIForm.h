@@ -8,7 +8,6 @@ class TUIForm : public TUIWidget {
 public:
     TUIForm(TUIWidget* parent = nullptr);
     void addField(const std::string& label, std::shared_ptr<TUIWidget> field);
-    ftxui::Component get_ftxui_component() override;
 private:
     std::vector<std::pair<std::string, std::shared_ptr<TUIWidget>>> fields_;
 };

@@ -12,8 +12,6 @@ public:
     TUILabel(const std::string& text = "", TUIWidget* parent = nullptr);
     ~TUILabel() override = default;
 
-    ftxui::Component get_ftxui_component() override;
-
     void setText(const std::string& text);
     std::string text() const;
 

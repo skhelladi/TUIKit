@@ -10,7 +10,6 @@ public:
     TUICheckBox(const std::string& text, bool initial_checked = false, TUIWidget* parent = nullptr);
     void onChange(OnChangeCallback cb);
     bool checked() const;
-    ftxui::Component get_ftxui_component() override;
 private:
     bool checked_ = false;
     OnChangeCallback on_change_;

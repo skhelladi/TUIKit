@@ -2,9 +2,10 @@
 
 namespace TUIKIT {
 
-TUIToolbar::TUIToolbar(TUIWidget* parent)
-    : TUIWidget(parent) {
+TUIToolbar::TUIToolbar(TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Component()) {
     toolbar_layout_ = std::make_shared<TUIHBoxLayout>();
+    component_ = toolbar_layout_->get_ftxui_component();
 }
 
 std::shared_ptr<TUIButton> TUIToolbar::addButton(const std::string& text, TUIButton::OnClickedCallback on_clicked, const std::string& icon) {
@@ -17,10 +18,6 @@ std::shared_ptr<TUIButton> TUIToolbar::addButton(const std::string& text, TUIBut
     }
     toolbar_layout_->addWidget(button);
     return button;
-}
-
-ftxui::Component TUIToolbar::get_ftxui_component() {
-    return toolbar_layout_->get_ftxui_component();
 }
 
 } // namespace TUIKIT

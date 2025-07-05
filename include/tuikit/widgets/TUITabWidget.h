@@ -16,7 +16,6 @@ public:
 
     void addTab(const std::string& title, std::shared_ptr<TUIWidget> content_widget);
     void addTab(const std::string& title, std::shared_ptr<TUIWidget> content_widget, const std::string& icon);
-    ftxui::Component get_ftxui_component() override;
 
     void setCurrentIndex(int index);
     int currentIndex() const;
@@ -26,7 +25,6 @@ private:
     std::vector<std::string> tab_icons_;
     std::vector<ftxui::Component> tab_ftxui_components_;
     int selected_tab_index_ = 0;
-    ftxui::Component ftxui_tab_component_;
 
     void update_ftxui_tab_component();
 };

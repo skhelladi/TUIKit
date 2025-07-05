@@ -21,19 +21,7 @@ endif()
 # =============================================================================
 
 # FTXUI
-include(FetchContent)
-
-# Set a persistent directory for external dependencies
-set(FETCHCONTENT_BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/external)
-
-FetchContent_Declare(
-  ftxui
-  GIT_REPOSITORY https://github.com/ArthurSonzogni/ftxui
-  GIT_TAG        v6.1.9
-)
-
-# This makes the dependency available and adds its targets (e.g., ftxui::screen)
-FetchContent_MakeAvailable(ftxui)
+add_subdirectory(external/ftxui)
 
 # =============================================================================
 # PROJECT STRUCTURE

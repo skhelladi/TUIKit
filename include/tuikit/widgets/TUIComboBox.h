@@ -14,13 +14,11 @@ public:
     int selectedIndex() const;
     std::string selectedText() const;
     void setSelectedIndex(int index);
-    ftxui::Component get_ftxui_component() override;
 private:
     std::vector<std::string> options_;
     int selected_index_ = 0;
     int last_known_index_ = -1; // To track changes
     OnSelectCallback on_select_;
-    ftxui::Component ftxui_dropdown_component_;
     void update_ftxui_dropdown_component();
 };
 }

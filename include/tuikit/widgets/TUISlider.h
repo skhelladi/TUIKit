@@ -15,8 +15,6 @@ public:
     TUISlider(const std::string& label, float initial_value, float min_value, float max_value, float increment, TUIWidget* parent = nullptr);
     ~TUISlider() override = default;
 
-    ftxui::Component get_ftxui_component() override;
-
     float value() const;
     void setValue(float new_value);
     void onChange(OnChangeCallback callback);

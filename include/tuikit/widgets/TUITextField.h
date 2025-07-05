@@ -10,7 +10,6 @@ public:
     TUITextField(const std::string& placeholder = "", TUIWidget* parent = nullptr);
     void onChange(OnChangeCallback cb);
     std::string text() const;
-    ftxui::Component get_ftxui_component() override;
 private:
     std::string value_;
     OnChangeCallback on_change_;

@@ -15,7 +15,6 @@ public:
     TUIButton(const std::string& text, TUIWidget* parent = nullptr);
     ~TUIButton() override = default;
 
-    ftxui::Component get_ftxui_component() override;
     void onClick(OnClickedCallback callback); // Setter for the click callback
     void setIcon(const std::string& icon);
     const std::string& icon() const;
@@ -25,7 +24,6 @@ private:
     std::string text_; // This will hold the text displayed by the FTXUI button (icon + original_text_)
     std::string icon_;
     OnClickedCallback on_clicked_;
-    ftxui::Component ftxui_button_component_;
 };
 
 } // namespace TUIKIT

@@ -16,8 +16,6 @@ public:
     TUIToolbar(TUIWidget* parent = nullptr);
     ~TUIToolbar() override = default;
 
-    ftxui::Component get_ftxui_component() override;
-
     std::shared_ptr<TUIButton> addButton(const std::string& text, TUIButton::OnClickedCallback on_clicked = nullptr, const std::string& icon = "");
 
 private:

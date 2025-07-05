@@ -3,18 +3,12 @@
 
 namespace TUIKIT {
 
-TUIVBoxLayout::TUIVBoxLayout(TUIWidget* parent) : TUILayout(parent) {}
+TUIVBoxLayout::TUIVBoxLayout(TUIWidget* /*parent*/)
+    : TUILayout(ftxui::Container::Vertical({})) {}
 
 void TUIVBoxLayout::addWidget(std::shared_ptr<TUIWidget> widget) {
     widgets_.push_back(widget);
-}
-
-ftxui::Component TUIVBoxLayout::get_ftxui_component() {
-    ftxui::Components components;
-    for (auto& widget : widgets_) {
-        components.push_back(widget->get_ftxui_component());
-    }
-    return ftxui::Container::Vertical(components);
+    component_->Add(widget->get_ftxui_component());
 }
 
 } // namespace TUIKIT

@@ -15,12 +15,10 @@ public:
     int selectedIndex() const;
     std::string selectedText() const;
     void setSelectedIndex(int index);
-    ftxui::Component get_ftxui_component() override;
 private:
     std::vector<std::string> options_;
     int selected_index_ = 0;
     OnSelectCallback on_select_;
-    ftxui::Component ftxui_radiobox_component_;
     void update_ftxui_radiobox_component();
 };
 }

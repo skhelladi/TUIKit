@@ -12,7 +12,6 @@ public:
     ~TUIScreen() override = default;
 
     void setLayout(std::shared_ptr<TUIWidget> layout_widget);
-    ftxui::Component get_ftxui_component() override;
 
 private:
     std::shared_ptr<TUIWidget> layout_widget_ = nullptr;

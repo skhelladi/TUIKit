@@ -1,4 +1,3 @@
-
 #include "tuikit/core/TUIApp.h"
 #include "tuikit/core/TUIWidget.h"
 #include "tuikit/core/TUIStyle.h"
@@ -149,23 +148,8 @@ int TUIApp::exec() {
     }
     auto final_interactive_root = ftxui::Container::Vertical(children);
 
-    std::cerr << "[TUIApp::exec] - Creating event_dispatcher." << std::endl;
-    auto event_dispatcher = ftxui::CatchEvent(final_interactive_root, [&](ftxui::Event event) {
-        if (show_modal_) {
-            return modal_->OnEvent(event);
-        } else {
-            if (!pages_.empty() && active_page_ >= 0 && static_cast<size_t>(active_page_) < pages_.size()) {
-                ftxui::Component active_page_component = pages_[active_page_];
-                if (active_page_component->OnEvent(event)) {
-                    return true;
-                }
-            }
-            return main_layout_component_->OnEvent(event);
-        }
-    });
-
     std::cerr << "[TUIApp::exec] - Calling screen_.Loop()." << std::endl;
-    screen_.Loop(event_dispatcher);
+    screen_.Loop(final_interactive_root);
     std::cerr << "[TUIApp::exec] - screen_.Loop() returned." << std::endl;
 
     if (on_exit_) {

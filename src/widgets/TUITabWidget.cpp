@@ -1,10 +1,9 @@
-
 #include "tuikit/widgets/TUITabWidget.h"
 #include <ftxui/component/component.hpp>
 
 namespace TUIKIT {
 
-TUITabWidget::TUITabWidget(TUIWidget* parent) : TUIWidget(parent) {
+TUITabWidget::TUITabWidget(TUIWidget* /*parent*/) : TUIWidget(ftxui::Component()) {
     update_ftxui_tab_component();
 }
 
@@ -20,10 +19,6 @@ void TUITabWidget::addTab(const std::string& title, std::shared_ptr<TUIWidget> c
     update_ftxui_tab_component();
 }
 
-ftxui::Component TUITabWidget::get_ftxui_component() {
-    return ftxui_tab_component_;
-}
-
 void TUITabWidget::setCurrentIndex(int index) {
     selected_tab_index_ = index;
 }
@@ -35,7 +30,7 @@ int TUITabWidget::currentIndex() const {
 void TUITabWidget::update_ftxui_tab_component() {
     auto toggle = ftxui::Toggle(&tab_titles_, &selected_tab_index_); 
     auto tab_container = ftxui::Container::Tab(tab_ftxui_components_, &selected_tab_index_);
-    ftxui_tab_component_ = ftxui::Container::Vertical({
+    component_ = ftxui::Container::Vertical({
         toggle,
         tab_container
     });

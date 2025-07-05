@@ -4,16 +4,12 @@
 
 namespace TUIKIT {
 
-TUIStatusBar::TUIStatusBar(const std::string& message, TUIWidget* parent)
-    : TUIWidget(parent) {
+TUIStatusBar::TUIStatusBar(const std::string& message, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Component()) {
     message_label_ = new TUILabel(message);
-    ftxui_status_bar_component_ = ftxui::Renderer(message_label_->get_ftxui_component(), [this] {
+    component_ = ftxui::Renderer(message_label_->get_ftxui_component(), [this] {
         return message_label_->get_ftxui_component()->Render() | ftxui::border;
     });
-}
-
-ftxui::Component TUIStatusBar::get_ftxui_component() {
-    return ftxui_status_bar_component_;
 }
 
 void TUIStatusBar::setMessage(const std::string& message) {

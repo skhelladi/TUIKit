@@ -1,11 +1,32 @@
 #include "tuikit.h"
-#include "tuikit/core/TUIIcons.h"
-#include "tuikit/widgets/Notification.h"
 #include <iostream>
 #include <string>
 #include <fstream> // Required for file redirection
 
 using namespace TUIKIT;
+
+class AppSlots {
+public:
+    AppSlots(TUIApp& app, Label& button_label, Label& checkbox_label) 
+        : app_(app), button_label_(button_label), checkbox_label_(checkbox_label) {}
+
+    void handleButtonClick() {
+        button_label_->setText("Button clicked: Yes (Connected Slot)");
+    }
+
+    void handleCheckboxChange(bool checked) {
+        checkbox_label_->setText("Checkbox: " + std::string(checked ? "On (Connected Slot)" : "Off (Connected Slot)"));
+    }
+
+    void showNotification() {
+        Notification::show(app_, "Hello from a connected slot!", "Info", 3000);
+    }
+
+private:
+    TUIApp& app_;
+    Label& button_label_;
+    Label& checkbox_label_;
+};
 
 int main() {
     // Redirect std::cerr to a file
@@ -24,20 +45,22 @@ int main() {
     auto combobox_label = label("Selected ComboBox Option: None");
     auto slider_label = label("Slider Value: 0.0");
 
+    AppSlots slots(app, button_label, checkbox_label);
+
     // --- Main Widgets Tab Content ---
     auto main_widgets_content = vbox();
 
     // Input & Button Group
     auto input_button_layout = hbox();
     auto text_field_widget = textfield("Enter text here");
-    text_field_widget->onChange([&](const std::string& new_text) {
+    connect(text_field_widget, [&](const std::string& new_text) {
         input_label->setText("Input: " + new_text);
     });
+
     auto button_widget = button("Show Input");
     button_widget->setIcon(ICON::Rocket);
-    button_widget->onClick([&] {
-        button_label->setText("Button clicked: Yes. Current input: " + text_field_widget->text());
-    });
+    connect(button_widget, &slots, &AppSlots::handleButtonClick);
+
     input_button_layout->addWidget(text_field_widget);
     input_button_layout->addWidget(button_widget);
 
@@ -48,9 +71,7 @@ int main() {
 
     // Notification Example
     auto show_notification_button = button("Show Notification");
-    show_notification_button->onClick([&app] {
-        Notification::show(app, "Hello from TUIKIT!", "Info", 3000);
-    });
+    connect(show_notification_button, &slots, &AppSlots::showNotification);
     input_button_group->addWidget(show_notification_button);
 
     main_widgets_content->addWidget(groupbox("Input & Button", input_button_group));
@@ -62,22 +83,20 @@ int main() {
     auto menu_widget = menu(menu_options);
     std::vector<std::string> menu_icons = {ICON::NewFile, ICON::Open, ICON::Tasks};
     menu_widget->setIcons(menu_icons);
-    menu_widget->onSelect([&](int selected_index) {
+    connect(menu_widget, [&](int selected_index) {
         menu_label->setText("Selected Menu Item: " + menu_widget->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
     });
     selection_widgets_layout->addWidget(menu_widget);
     selection_widgets_layout->addWidget(menu_label);
 
     auto checkbox_widget = checkbox("Enable Feature");
-    checkbox_widget->onChange([&](bool checked) {
-        checkbox_label->setText("Checkbox: " + std::string(checked ? "On" : "Off"));
-    });
+    connect(checkbox_widget, &slots, &AppSlots::handleCheckboxChange);
     selection_widgets_layout->addWidget(checkbox_widget);
     selection_widgets_layout->addWidget(checkbox_label);
 
     std::vector<std::string> radio_options = {"Red", "Green", "Blue"};
     auto radiobox_widget = radiobox(radio_options);
-    radiobox_widget->onSelect([&](int selected_index) {
+    connect(radiobox_widget, [&](int selected_index) {
         radiobox_label->setText("Selected Radio Option: " + radiobox_widget->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
     });
     selection_widgets_layout->addWidget(radiobox_widget);
@@ -85,7 +104,7 @@ int main() {
 
     std::vector<std::string> combobox_options = {"Apple", "Banana", "Cherry"};
     auto combobox_widget = combobox(combobox_options);
-    combobox_widget->onSelect([&](int selected_index) {
+    connect(combobox_widget, [&](int selected_index) {
         combobox_label->setText("Selected ComboBox Option: " + combobox_widget->selectedText() + " (Index: " + std::to_string(selected_index) + ")");
         app.request_redraw();
     });
@@ -97,7 +116,7 @@ int main() {
     // Slider Group
     float slider_value = 0.0f;
     auto slider_widget = slider("Volume", slider_value, 0.0f, 100.0f, 1.0f);
-    slider_widget->onChange([&](float value) {
+    connect(slider_widget, [&](float value) {
         slider_label->setText("Slider Value: " + std::to_string(static_cast<int>(value)));
         app.request_redraw();
     });
@@ -117,12 +136,11 @@ int main() {
 
     // --- Themes Tab Content ---
     auto theme_tab_content = vbox();
-    auto theme_label = label("Change the global theme of the application.");
-    theme_tab_content->addWidget(theme_label);
+    theme_tab_content->addWidget(label("Change the global theme of the application."));
     theme_tab_content->addWidget(label("Select Theme:"));
     std::vector<std::string> theme_options = {"Dark", "Light", "Monokai", "Solarized", "Dracula", "Nord", "Blueberry", "GitHub", "Material", "MaterialDark", "MaterialLight", "MaterialBlue"};
     auto theme_combobox = combobox(theme_options, 0);
-    theme_combobox->onSelect([&](int idx) {
+    connect(theme_combobox, [&](int idx) {
         TUIStyle::instance().setGlobalTheme(static_cast<Theme>(idx));
         app.request_redraw();
     });
@@ -137,7 +155,7 @@ int main() {
 
     auto status_bar = statusbar("Application Ready.");
     auto update_status_button = button("Update Status");
-    update_status_button->onClick([&] {
+    connect(update_status_button, [&] {
         static int status_count = 0;
         status_bar->setMessage("Status updated: " + std::to_string(++status_count));
     });

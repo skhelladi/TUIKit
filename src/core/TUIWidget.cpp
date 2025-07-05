@@ -2,8 +2,6 @@
 
 namespace TUIKIT {
 
-TUIWidget::TUIWidget(TUIWidget* /*parent*/) {}
-
-TUIWidget::~TUIWidget() {}
+TUIWidget::TUIWidget(ftxui::Component component) : component_(component) {}
 
 } // namespace TUIKIT

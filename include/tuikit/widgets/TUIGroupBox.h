@@ -6,7 +6,6 @@ namespace TUIKIT {
 class TUIGroupBox : public TUIWidget {
 public:
     TUIGroupBox(const std::string& title, std::shared_ptr<TUIWidget> content_widget, bool show_border = true, TUIWidget* parent = nullptr);
-    ftxui::Component get_ftxui_component() override;
     void setTitle(const std::string& title);
     void setContentWidget(std::shared_ptr<TUIWidget> content_widget);
     void setShowBorder(bool show_border);

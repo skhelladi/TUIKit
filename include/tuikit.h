@@ -27,6 +27,11 @@
 #include "tuikit/widgets/TUITextArea.h"
 #include "tuikit/widgets/TUIProgressBar.h"
 #include "tuikit/widgets/TUIScrollableContainer.h"
+#include "tuikit/core/TUIConnect.h"
+
+#include "tuikit/core/TUIIcons.h"
+#include "tuikit/widgets/Notification.h"
+
 
 
 #include <memory>

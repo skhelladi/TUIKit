@@ -3,8 +3,8 @@
 
 namespace TUIKIT {
 
-TUIRadioBox::TUIRadioBox(const std::vector<std::string>& options, int initial_selected, TUIWidget* parent)
-    : TUILayout(parent), options_(options), selected_index_(initial_selected) {
+TUIRadioBox::TUIRadioBox(const std::vector<std::string>& options, int initial_selected, TUIWidget* /*parent*/)
+    : TUILayout(ftxui::Radiobox(&options_, &selected_index_)), options_(options), selected_index_(initial_selected) {
     update_ftxui_radiobox_component();
 }
 
@@ -29,10 +29,6 @@ std::string TUIRadioBox::selectedText() const {
     return "";
 }
 
-ftxui::Component TUIRadioBox::get_ftxui_component() {
-    return ftxui_radiobox_component_;
-}
-
 void TUIRadioBox::setSelectedIndex(int index) {
     if (index >= 0 && static_cast<size_t>(index) < options_.size()) {
         selected_index_ = index;
@@ -48,7 +44,7 @@ void TUIRadioBox::update_ftxui_radiobox_component() {
             on_select_(selected_index_);
         }
     };
-    ftxui_radiobox_component_ = ftxui::Radiobox(&options_, &selected_index_, opt);
+    component_ = ftxui::Radiobox(&options_, &selected_index_, opt);
 }
 
 } // namespace TUIKIT

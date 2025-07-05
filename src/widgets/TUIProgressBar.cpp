@@ -1,13 +1,11 @@
-
 #include "tuikit/widgets/TUIProgressBar.h"
 #include <ftxui/dom/elements.hpp>
 #include <algorithm> // For std::clamp
 
 namespace TUIKIT {
 
-TUIProgressBar::TUIProgressBar(float initial_value, const std::string& label, TUIWidget* parent)
-    : TUIWidget(parent), value_(initial_value), label_(label) {
-    ftxui_progress_bar_component_ = ftxui::Renderer([this] {
+TUIProgressBar::TUIProgressBar(float initial_value, const std::string& label, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Renderer([this] {
         auto progress_text = std::to_string(static_cast<int>(value_ * 100)) + "%";
         if (!label_.empty()) {
             progress_text = label_ + " " + progress_text;
@@ -16,11 +14,7 @@ TUIProgressBar::TUIProgressBar(float initial_value, const std::string& label, TU
             ftxui::text(progress_text),
             ftxui::gauge(value_)
         });
-    });
-}
-
-ftxui::Component TUIProgressBar::get_ftxui_component() {
-    return ftxui_progress_bar_component_;
+    })), value_(initial_value), label_(label) {
 }
 
 void TUIProgressBar::setValue(float value) {

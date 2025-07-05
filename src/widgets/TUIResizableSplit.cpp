@@ -5,19 +5,14 @@
 
 namespace TUIKIT {
 
-TUIResizableSplit::TUIResizableSplit(std::shared_ptr<TUIWidget> first_widget, std::shared_ptr<TUIWidget> second_widget, Orientation orientation, TUIWidget* parent)
-    : TUIWidget(parent), first_widget_(first_widget), second_widget_(second_widget), orientation_(orientation) {
+TUIResizableSplit::TUIResizableSplit(std::shared_ptr<TUIWidget> first_widget, std::shared_ptr<TUIWidget> second_widget, Orientation orientation, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Component()), first_widget_(first_widget), second_widget_(second_widget), orientation_(orientation) {
     std::cerr << "TUIResizableSplit: Constructor called." << std::endl; // Debug output
     if (orientation == Horizontal) {
-        ftxui_split_component_ = ftxui::ResizableSplitLeft(first_widget_->get_ftxui_component(), second_widget_->get_ftxui_component(), &main_size_);
+        component_ = ftxui::ResizableSplitLeft(first_widget_->get_ftxui_component(), second_widget_->get_ftxui_component(), &main_size_);
     } else {
-        ftxui_split_component_ = ftxui::ResizableSplitTop(first_widget_->get_ftxui_component(), second_widget_->get_ftxui_component(), &main_size_);
+        component_ = ftxui::ResizableSplitTop(first_widget_->get_ftxui_component(), second_widget_->get_ftxui_component(), &main_size_);
     }
-}
-
-ftxui::Component TUIResizableSplit::get_ftxui_component() {
-    std::cerr << "TUIResizableSplit: get_ftxui_component() called." << std::endl; // Debug output
-    return ftxui_split_component_;
 }
 
 void TUIResizableSplit::setMinimumSizes(int min_first, int min_second) {

@@ -16,7 +16,6 @@ public:
     TUIResizableSplit(std::shared_ptr<TUIWidget> first_widget, std::shared_ptr<TUIWidget> second_widget, Orientation orientation = Horizontal, TUIWidget* parent = nullptr);
     ~TUIResizableSplit() override = default;
 
-    ftxui::Component get_ftxui_component() override;
     void setMinimumSizes(int min_first, int min_second);
 
 private:
@@ -26,7 +25,6 @@ private:
     int main_size_ = 0; // To store the size of the main panel for resizable split
     int min_first_ = 0;
     int min_second_ = 0;
-    ftxui::Component ftxui_split_component_;
 };
 
 } // namespace TUIKIT

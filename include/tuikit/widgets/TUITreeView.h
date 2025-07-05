@@ -1,10 +1,13 @@
-#ifndef TUIKIT_TUITREEVIEW_H
-#define TUIKIT_TUITREEVIEW_H
+#pragma once
 
 #include "tuikit/core/TUIWidget.h"
 #include <string>
 #include <vector>
-#include <ftxui/component/component.hpp>
+#include <functional>
+#include <memory>
+#include "tuikit/layouts/TUIVBoxLayout.h"
+#include "tuikit/widgets/TUICollapsible.h"
+#include "tuikit/widgets/TUIButton.h" // Added for clickable nodes
 
 namespace TUIKIT {
 
@@ -21,17 +24,16 @@ public:
     TUITreeView(TreeNode root_node, TUIWidget* parent = nullptr);
     ~TUITreeView() override = default;
 
-    ftxui::Component get_ftxui_component() override;
     void onSelect(OnSelectCallback cb);
+
+    std::shared_ptr<TUICollapsible> createCollapsibleNode(const TreeNode &node);
 
 private:
     TreeNode root_node_;
-    ftxui::Component ftxui_tree_view_component_;
     OnSelectCallback on_select_;
 
-    ftxui::Component build_ftxui_tree_component(TreeNode& node);
+    std::shared_ptr<class TUIVBoxLayout> main_layout_;
+
 };
 
 } // namespace TUIKIT
-
-#endif // TUIKIT_TUITREEVIEW_H
