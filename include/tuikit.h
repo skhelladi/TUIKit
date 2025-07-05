@@ -31,6 +31,7 @@
 
 #include "tuikit/core/TUIIcons.h"
 #include "tuikit/widgets/Notification.h"
+#include "tuikit/core/TUIKLoader.h"
 
 
 

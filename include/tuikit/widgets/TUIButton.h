@@ -17,6 +17,7 @@ public:
 
     void onClick(OnClickedCallback callback); // Setter for the click callback
     void setIcon(const std::string& icon);
+    void setText(const std::string& text); // New method to set button text
     const std::string& icon() const;
 
 private:

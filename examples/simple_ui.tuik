@@ -1,0 +1,47 @@
+{
+    "class": "TUIVBoxLayout",
+    "name": "main_layout",
+    "children": [
+        {
+            "class": "TUIGroupBox",
+            "name": "input_group",
+            "properties": {
+                "title": "Input & Button Example"
+            },
+            "content": {
+                "class": "TUIVBoxLayout",
+                "children": [
+                    {
+                        "class": "TUILabel",
+                        "name": "info_label",
+                        "properties": {
+                            "text": "Enter your name:"
+                        }
+                    },
+                    {
+                        "class": "TUITextField",
+                        "name": "name_input",
+                        "properties": {
+                            "placeholder": "Your name..."
+                        }
+                    },
+                    {
+                        "class": "TUIButton",
+                        "name": "submit_button",
+                        "properties": {
+                            "text": "Submit",
+                            "icon": "Rocket"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "class": "TUILabel",
+            "name": "output_label",
+            "properties": {
+                "text": ""
+            }
+        }
+    ]
+}

@@ -5,7 +5,13 @@
 #include <memory>
 #include <string>
 #include "tuikit/core/TUIStyle.h"
+#include "tuikit/core/TUIKLoader.h"
+
 namespace TUIKIT {
+
+// Forward declaration to fix template argument errors
+class TUIKLoader;
+
 class TUIApp {
 public:
     TUIApp(const std::string& title = "TUI App");
@@ -27,6 +33,11 @@ public:
 
     void show_modal(ftxui::Component modal);
     void close_modal();
+
+    // UI Loading
+    std::shared_ptr<class TUIWidget> loadUI(const std::string& filepath);
+    std::shared_ptr<class TUIWidget> getWidget(const std::string& name);
+
 // Ajout gestion de pages/menu
     void add_page(const std::string& name, ftxui::Component page);
     void set_active_page(int index);
@@ -36,6 +47,7 @@ private:
     std::shared_ptr<class TUIWidget> main_widget_ = nullptr;
     std::function<void()> on_exit_;
     ftxui::ScreenInteractive screen_;
+    std::unique_ptr<TUIKLoader> ui_loader_; // Instance of TUIKLoader
 
     // Pour gestion menu/pages
     std::vector<std::string> page_names_;

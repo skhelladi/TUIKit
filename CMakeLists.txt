@@ -23,6 +23,9 @@ endif()
 # FTXUI
 add_subdirectory(external/ftxui)
 
+# nlohmann/json (header-only)
+include_directories(external/json)
+
 # =============================================================================
 # PROJECT STRUCTURE
 # =============================================================================
@@ -83,11 +86,20 @@ set(TUIKIT_SOURCES
     src/widgets/TUITextArea.cpp
     src/widgets/TUITreeView.cpp
     src/widgets/Notification.cpp
+    src/core/TUIKLoader.cpp
     # Add other source files as they are created
 )
 
 set(EXAMPLE_SOURCES
-    examples/main.cpp
+    examples/example_1.cpp
+)
+
+set(EXAMPLE_2_SOURCES
+    examples/example_2.cpp
+)
+
+set(FTXUI_TEST_SOURCES
+    examples/ftxui_test.cpp
 )
 
 # =============================================================================
@@ -98,15 +110,24 @@ add_library(tuikit ${TUIKIT_SOURCES})
 target_include_directories(tuikit PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/external/json>
 )
 target_link_libraries(tuikit PUBLIC ftxui::screen ftxui::dom ftxui::component)
 
 # =============================================================================
-# EXAMPLE EXECUTABLE
+# EXAMPLE EXECUTABLE 1
 # =============================================================================
 
-add_executable(example_usage ${EXAMPLE_SOURCES})
-target_link_libraries(example_usage PRIVATE tuikit)
+add_executable(example_1 ${EXAMPLE_SOURCES})
+target_link_libraries(example_1 PRIVATE tuikit)
+
+# =============================================================================
+# EXAMPLE EXECUTABLE 2
+# =============================================================================
+
+add_executable(example_2 ${EXAMPLE_2_SOURCES})
+target_link_libraries(example_2 PRIVATE tuikit)
+
 
 
 # =============================================================================

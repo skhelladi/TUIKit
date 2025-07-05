@@ -1,17 +1,13 @@
-#include "tuikit/core/TUIApp.h"
-#include "tuikit/core/TUIWidget.h"
-#include "tuikit/core/TUIStyle.h"
-#include <ftxui/component/component.hpp>
-#include <ftxui/component/screen_interactive.hpp>
-#include <ftxui/dom/elements.hpp>
-#include <iostream>
+#include "tuikit/core/TUIKLoader.h" // Include TUIKLoader
 
 namespace TUIKIT {
 
 using namespace ftxui;
 
 TUIApp::TUIApp(const std::string& title)
-    : title_(title), screen_(ftxui::ScreenInteractive::Fullscreen()) {}
+    : title_(title), screen_(ftxui::ScreenInteractive::Fullscreen()), ui_loader_(std::make_unique<TUIKLoader>()) {
+    std::cerr << "[DEBUG] TUIApp constructor: screen_ initialized." << std::endl << std::flush;
+}
 
 void TUIApp::set_theme(Theme theme) {
     TUIStyle::instance().setGlobalTheme(theme);
@@ -37,6 +33,14 @@ void TUIApp::show_modal(ftxui::Component modal) {
 void TUIApp::close_modal() {
     show_modal_ = false;
     modal_ = nullptr;
+}
+
+std::shared_ptr<TUIWidget> TUIApp::loadUI(const std::string& filepath) {
+    return ui_loader_->load(filepath);
+}
+
+std::shared_ptr<TUIWidget> TUIApp::getWidget(const std::string& name) {
+    return ui_loader_->getWidget(name);
 }
 
 void TUIApp::show_message(const std::string& message, const std::string& title) {
@@ -90,17 +94,17 @@ void TUIApp::confirm(const std::string& message, std::function<void(bool)> callb
 }
 
 int TUIApp::exec() {
-    std::cerr << "[TUIApp::exec] - Starting exec()" << std::endl;
+    std::cerr << "[TUIApp::exec] - Starting exec()" << std::endl << std::flush;
 
     if (pages_.empty() && !main_widget_) {
-        std::cerr << "[TUIApp::exec] - Error: No pages or main widget have been added to the application." << std::endl;
+        std::cerr << "[TUIApp::exec] - Error: No pages or main widget have been added to the application." << std::endl << std::flush;
         return 1;
     }
 
     // Determine the base component to display
     ftxui::Component base_component;
     if (!pages_.empty()) {
-        std::cerr << "[TUIApp::exec] - Using pages structure." << std::endl;
+        std::cerr << "[TUIApp::exec] - Using pages structure." << std::endl << std::flush;
         auto menu = ftxui::Menu(&page_names_, &active_page_);
         auto page_container = ftxui::Container::Tab(pages_, &active_page_);
 
@@ -109,21 +113,32 @@ int TUIApp::exec() {
             page_container,
         });
     } else if (main_widget_) {
-        std::cerr << "[TUIApp::exec] - Using main_widget_." << std::endl;
+        std::cerr << "[TUIApp::exec] - Using main_widget_." << std::endl << std::flush;
+        if (!main_widget_->get_ftxui_component()) {
+            std::cerr << "[TUIApp::exec] - Error: main_widget_ has a null FTXUI component." << std::endl << std::flush;
+            return 1;
+        }
         base_component = main_widget_->get_ftxui_component();
+        std::cerr << "[TUIApp::exec] - base_component from main_widget_ obtained." << std::endl << std::flush;
+    } else {
+        std::cerr << "[TUIApp::exec] - Error: No base component to display." << std::endl << std::flush;
+        return 1;
     }
 
-    std::cerr << "[TUIApp::exec] - Creating main_layout_component_ renderer." << std::endl;
+    std::cerr << "[TUIApp::exec] - Creating main_layout_component_ renderer." << std::endl << std::flush;
     main_layout_component_ = ftxui::Renderer(base_component, [this, base_component] {
+        std::cerr << "[TUIApp::exec] - Renderer lambda entered." << std::endl << std::flush;
         auto& theme = TUIStyle::instance().currentTheme();
 
         ftxui::Element rendered_base = base_component->Render();
+        std::cerr << "[TUIApp::exec] - base_component->Render() called." << std::endl << std::flush;
 
         ftxui::Element decorated_view = ftxui::vbox({
             ftxui::text(title_) | ftxui::bold | ftxui::center | ftxui::color(theme.primary),
             ftxui::separator(),
             rendered_base | ftxui::flex,
         });
+        std::cerr << "[TUIApp::exec] - decorated_view created." << std::endl << std::flush;
 
         if (show_status_bar_) {
             decorated_view = ftxui::vbox({
@@ -131,32 +146,35 @@ int TUIApp::exec() {
                 ftxui::separator(),
                 ftxui::text(status_text_) | ftxui::color(theme.text),
             });
+            std::cerr << "[TUIApp::exec] - Status bar added." << std::endl << std::flush;
         }
 
         if (show_modal_ && modal_) {
+            std::cerr << "[TUIApp::exec] - Modal detected, rendering modal." << std::endl << std::flush;
             return ftxui::dbox({decorated_view, modal_->Render() | ftxui::clear_under | ftxui::center});
         }
-
+        std::cerr << "[TUIApp::exec] - Returning decorated_view." << std::endl << std::flush;
         return decorated_view;
     });
 
-    std::cerr << "[TUIApp::exec] - Creating final_interactive_root." << std::endl;
+    std::cerr << "[TUIApp::exec] - Creating final_interactive_root." << std::endl << std::flush;
     std::vector<ftxui::Component> children;
     children.push_back(main_layout_component_);
     if (show_modal_ && modal_) {
         children.push_back(ftxui::Maybe(modal_, &show_modal_));
     }
     auto final_interactive_root = ftxui::Container::Vertical(children);
+    std::cerr << "[TUIApp::exec] - final_interactive_root created." << std::endl << std::flush;
 
-    std::cerr << "[TUIApp::exec] - Calling screen_.Loop()." << std::endl;
+    std::cerr << "[TUIApp::exec] - About to call screen_.Loop()." << std::endl << std::flush;
     screen_.Loop(final_interactive_root);
-    std::cerr << "[TUIApp::exec] - screen_.Loop() returned." << std::endl;
+    std::cerr << "[TUIApp::exec] - screen_.Loop() returned." << std::endl << std::flush;
 
     if (on_exit_) {
-        std::cerr << "[TUIApp::exec] - Calling on_exit_ callback." << std::endl;
+        std::cerr << "[TUIApp::exec] - Calling on_exit_ callback." << std::endl << std::flush;
         on_exit_();
     }
-    std::cerr << "[TUIApp::exec] - Exiting exec()." << std::endl;
+    std::cerr << "[TUIApp::exec] - Exiting exec()." << std::endl << std::flush;
     return 0;
 }
 
