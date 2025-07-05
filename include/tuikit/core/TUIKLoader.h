@@ -33,19 +33,21 @@
 #include <string>
 #include <vector>
 
-namespace TUIKIT {
+namespace TUIKIT
+{
 
-class TUIKLoader {
-public:
-    TUIKLoader();
-    std::shared_ptr<TUIWidget> load(const std::string& filepath);
-    std::shared_ptr<TUIWidget> getWidget(const std::string& name);
+    class TUIKLoader
+    {
+    public:
+        TUIKLoader();
+        std::shared_ptr<TUIWidget> load(const std::string &filepath);
+        std::shared_ptr<TUIWidget> getWidget(const std::string &name);
+        std::shared_ptr<TUIWidget> createWidgetFromJson(const nlohmann::json &widget_json);
 
-private:
-    std::map<std::string, std::shared_ptr<TUIWidget>> named_widgets_;
+    private:
+        std::map<std::string, std::shared_ptr<TUIWidget>> named_widgets_;
 
-    std::shared_ptr<TUIWidget> createWidgetFromJson(const nlohmann::json& widget_json);
-    void applyProperties(std::shared_ptr<TUIWidget> widget, const nlohmann::json& properties_json);
-};
+        void applyProperties(std::shared_ptr<TUIWidget> widget, const nlohmann::json &properties_json);
+    };
 
 } // namespace TUIKIT

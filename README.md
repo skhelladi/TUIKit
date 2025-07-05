@@ -10,6 +10,7 @@ Based on [FTXUI](https://github.com/ArthurSonzogni/FTXUI), TUIKit is a modern C+
 *   **Event Handling:** Manage user interactions through a signal/slot-like mechanism or callbacks.
 *   **Automatic Layouts:** Employ flexible layout managers (`TUIVBox`, `TUIHBox`) for responsive UI design.
 *   **Advanced Theming:** Customize colors, borders, and styles to create visually appealing interfaces.
+*  **UI Definition Files:** Support for defining UI layouts in JSON-like `.tuik` files, allowing dynamic loading and modification of interfaces.
 
 ## ✨ Implemented Components (Current State)
 
@@ -105,6 +106,75 @@ int main() {
     app.setMainWidget(main_layout);
     return app.exec();
 }
+```
+
+---
+
+## 🆕 Example: Embedding a `.tuik` UI file
+
+TUIKit supports embedding JSON UI definitions (`.tuik` files) directly into your binary using CMake and `xxd`.  
+For each `.tuik` file listed in `TUIKIT_UI`, a header `<name>_tuik.h` is generated with a binary variable.
+
+**Example `.tuik` file (`examples/simple_ui.tuik`):**
+```json
+{
+  "class": "TUIVBoxLayout",
+  "children": [
+    { "class": "TUILabel", "properties": { "text": "Hello from .tuik!" } },
+    { "class": "TUIButton", "properties": { "text": "Click Me" }, "name": "btn" }
+  ]
+}
+```
+
+**C++ usage:**
+```cpp
+#include "tuikit.h"
+#include "examples/simple_ui_tuik.h"
+#include <nlohmann/json.hpp>
+
+using namespace TUIKIT;
+
+int main() {
+    TUIApp app("TUI .tuik Example");
+
+    // Load UI from embedded binary resource
+    std::string tuik_str(reinterpret_cast<const char*>(simple_ui_tuik), simple_ui_tuik_len);
+    nlohmann::json tuik_json = nlohmann::json::parse(tuik_str);
+
+    TUIKLoader loader;
+    auto main_ui_widget = loader.createWidgetFromJson(tuik_json);
+    app.setMainWidget(main_ui_widget);
+
+    // Connect a slot to the button named "btn"
+    auto btn = std::dynamic_pointer_cast<TUIButton>(loader.getWidget("btn"));
+    if (btn) {
+        connect(btn, [&] { /* action */ });
+    }
+
+    return app.exec();
+}
+```
+
+**CMake integration:**
+```cmake
+find_program(XXD_EXE xxd REQUIRED)
+set(TUIKIT_UI "examples/simple_ui.tuik")
+foreach(TUIK_FILE ${TUIKIT_UI})
+    get_filename_component(TUIK_NAME ${TUIK_FILE} NAME_WE)
+    get_filename_component(TUIK_DIR ${TUIK_FILE} DIRECTORY)
+    set(VAR_NAME "${TUIK_NAME}_tuik")
+    set(HEADER_FILE "${TUIK_DIR}/${TUIK_NAME}_tuik.h")
+    add_custom_command(
+        OUTPUT ${HEADER_FILE}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TUIK_DIR}
+        COMMAND ${XXD_EXE} -i -n ${VAR_NAME} ${TUIK_FILE} > ${HEADER_FILE}
+        DEPENDS ${TUIK_FILE}
+        COMMENT "Generate ${HEADER_FILE} from ${TUIK_FILE} with variable ${VAR_NAME} (xxd required)"
+        VERBATIM
+    )
+    list(APPEND EMBEDDED_HEADERS ${HEADER_FILE})
+endforeach()
+add_custom_target(generate_embedded_headers ALL DEPENDS ${EMBEDDED_HEADERS})
 ```
 <!-- 
 ## 🗺️ Development Roadmap

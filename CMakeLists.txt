@@ -30,6 +30,33 @@ include_directories(external/json)
 # PROJECT STRUCTURE
 # =============================================================================
 
+# -----------------------------------------------------------------------------
+# Automatic generation of ui_<project_name>.h headers from .tuik files declared by the user
+# -----------------------------------------------------------------------------
+# Example usage in the project's CMakeLists.txt:
+# set(TUIKIT_UI examples/simple_ui.tuik path/to/other_ui.tuik)
+if(NOT DEFINED TUIKIT_UI)
+    set(TUIKIT_UI "${CMAKE_SOURCE_DIR}/examples/example_2.tuik")
+endif()
+set(EMBEDDED_HEADERS "")
+foreach(TUIK_FILE ${TUIKIT_UI})
+    get_filename_component(TUIK_NAME ${TUIK_FILE} NAME_WE)
+    get_filename_component(TUIK_DIR ${TUIK_FILE} DIRECTORY)
+    set(VAR_NAME "${TUIK_NAME}_tuik")
+    set(HEADER_FILE "${TUIK_DIR}/${TUIK_NAME}_tuik.h")
+    add_custom_command(
+        OUTPUT ${HEADER_FILE}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${TUIK_DIR}
+        COMMAND xxd -i -n ${VAR_NAME} ${TUIK_FILE} > ${HEADER_FILE}
+        DEPENDS ${TUIK_FILE}
+        COMMENT "Generating ${HEADER_FILE} from ${TUIK_FILE} with variable ${VAR_NAME}"
+        VERBATIM
+    )
+    list(APPEND EMBEDDED_HEADERS ${HEADER_FILE})
+endforeach()
+add_custom_target(generate_embedded_headers ALL DEPENDS ${EMBEDDED_HEADERS})
+
+
 # Headers
 set(TUIKIT_HEADERS
     include/tuikit.h
@@ -140,7 +167,7 @@ install(DIRECTORY include/tuikit/core/ DESTINATION include/tuikit/core FILES_MAT
 install(DIRECTORY include/tuikit/layouts/ DESTINATION include/tuikit/layouts FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY include/tuikit/widgets/ DESTINATION include/tuikit/widgets FILES_MATCHING PATTERN "*.h")
 
-# Installation de la librairie
+# Library installation
 install(TARGETS tuikit
     EXPORT TUIFrameworkTargets
     LIBRARY DESTINATION lib
@@ -149,7 +176,7 @@ install(TARGETS tuikit
     INCLUDES DESTINATION include
 )
 
-# Configuration pour find_package
+# Configuration for find_package
 install(EXPORT TUIFrameworkTargets
     FILE TUIFrameworkTargets.cmake
     NAMESPACE TUIFramework::
@@ -229,14 +256,14 @@ include(CPack)
 # HELPER SCRIPTS
 # =============================================================================
 
-# Script de build rapide
+# Quick build script
 # configure_file(
 #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/build.sh.in"
 #     "${CMAKE_CURRENT_BINARY_ROOT}/build.sh"
 #     @ONLY
 # )
 
-# Script d'installation
+# Installation script
 # configure_file(
 #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/install.sh.in"
 #     "${CMAKE_CURRENT_BINARY_ROOT}/install.sh"
@@ -244,7 +271,7 @@ include(CPack)
 # )
 
 # =============================================================================
-# INFORMATIONS DE BUILD
+# BUILD INFORMATION
 # =============================================================================
 
 message(STATUS "=================================")
@@ -258,3 +285,4 @@ message(STATUS "Build tests: ${BUILD_TESTS}")
 message(STATUS "Build docs: ${BUILD_DOCS}")
 message(STATUS "Install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "=================================")
+
