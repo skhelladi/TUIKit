@@ -5,7 +5,7 @@
 Based on [FTXUI](https://github.com/ArthurSonzogni/FTXUI), TUIKit is a modern C++ framework designed to build rich and interactive Terminal User Interfaces (TUIs). Inspired by the simplicity and power of the Qt framework, TUIKit aims to provide a familiar development experience for creating command-line applications, especially suited for scientific and engineering projects.
 
 <p align="center">
-    <img src="docs/example_1.gif" alt="Demo of TUIKit in action">
+    <img src="docs/example_1.gif" alt="Demo of TUIKit in action"><br>
     <strong>See <code>example_1.cpp</code></strong><br>
 </p>
 
