@@ -41,10 +41,7 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
 
 *   **C++17 Compiler**: A compiler that supports C++17 (e.g., GCC, Clang, MSVC).
 *   **CMake**: Version 3.15 or higher.
-*   **FTXUI**: This project uses FTXUI as a dependency. You need to clone it into the `external/` directory:
-    ```bash
-    git clone https://github.com/ArthurSonzogni/FTXUI.git external/ftxui
-    ```
+*   **FTXUI**: This project uses FTXUI as a dependency.
 
 ### Building the Project
 
@@ -53,15 +50,25 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
     git clone https://github.com/skhelladi/TUIKit.git
     cd TUIKit
     ```
+2.  **Install dependencies:**
+    - Install FTXUI:
+    You need to clone it into the `external/ftxui` directory:
+    ```bash
+    git clone https://github.com/ArthurSonzogni/FTXUI.git external/ftxui
+    ```
+    - Install nolman/json for JSON parsing into `external/json`:
+    ```bash
+    wget https://github.com/nlohmann/json/releases/download/v3.12.0/json.hpp -P external/json
+    ```
 
-2.  **Create a build directory and configure CMake:**
+3.  **Create a build directory and configure CMake:**
     ```bash
     mkdir build
     cd build
     cmake ..
     ```
 
-3.  **Build the project:**
+4.  **Build the project:**
     ```bash
     cmake --build .
     ```
