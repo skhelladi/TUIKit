@@ -41,7 +41,8 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
 
 *   **C++17 Compiler**: A compiler that supports C++17 (e.g., GCC, Clang, MSVC).
 *   **CMake**: Version 3.15 or higher.
-*   **FTXUI**: This project uses FTXUI as a dependency.
+*   **FTXUI**: A terminal UI library that TUIKit is built upon.
+*   **nlohmann/json**: For JSON parsing, used in `.tuik` file handling.
 
 ### Building the Project
 
@@ -56,7 +57,7 @@ Based on the `examples/main.cpp` and the current codebase, the following core co
     ```bash
     git clone https://github.com/ArthurSonzogni/FTXUI.git external/ftxui
     ```
-    - Install nolman/json for JSON parsing into `external/json`:
+    - Install nolmann/json for JSON parsing into `external/json`:
     ```bash
     wget https://github.com/nlohmann/json/releases/download/v3.12.0/json.hpp -P external/json
     ```
