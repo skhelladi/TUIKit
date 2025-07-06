@@ -81,10 +81,14 @@ The following core components are implemented and functional:
 
 ### Running the Example
 
-After a successful build, you can run the example application:
+After a successful build, you can run the examples provided in the `examples` directory. The build process will generate executables in the `build` directory.:
 
 ```bash
-./build/example_usage
+./build/example_1
+```
+and 
+```bash
+./build/example_2
 ```
 
 ## 🧪 Usage Example
