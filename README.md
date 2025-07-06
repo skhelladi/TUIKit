@@ -14,7 +14,7 @@ Based on [FTXUI](https://github.com/ArthurSonzogni/FTXUI), TUIKit is a modern C+
 
 ## ✨ Implemented Components (Current State)
 
-Based on the `examples/main.cpp` and the current codebase, the following core components are implemented and functional:
+The following core components are implemented and functional:
 
 *   `TUIApp`: The entry point for the application.
 *   `TUIWidget`: Base class for all UI components.
