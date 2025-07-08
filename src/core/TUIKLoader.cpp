@@ -1,6 +1,6 @@
 #include "tuikit/core/TUIKLoader.h"
 #include "tuikit.h" // For factory functions
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <fstream>
 #include <iostream>
 
