@@ -12,6 +12,7 @@ namespace TUIKIT {
 class TUIMenu : public TUIWidget {
 public:
     using OnSelectCallback = std::function<void(int selected_index)>;
+    using OnEnterCallback = std::function<void(int selected_index)>;
 
     TUIMenu(const std::vector<std::string>& options, TUIWidget* parent = nullptr);
     ~TUIMenu() override = default;
@@ -19,6 +20,7 @@ public:
     void setOptions(const std::vector<std::string>& options);
     void setIcons(const std::vector<std::string>& icons); // Associe une icône à chaque option
     void onSelect(OnSelectCallback callback);
+    void onEnter(OnEnterCallback callback);
     int selectedIndex() const;
     std::string selectedText() const;
     void setSelectedIndex(int index);
@@ -29,6 +31,7 @@ private:
     std::vector<std::string> options_with_icons_cache_; // New member to store combined options
     int selected_index_ = 0;
     OnSelectCallback on_select_callback_;
+    OnEnterCallback on_enter_callback_;
 
     void update_ftxui_menu_component();
 };

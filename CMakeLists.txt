@@ -82,6 +82,10 @@ set(TUIKIT_HEADERS
     include/tuikit/widgets/TUIForm.h
     include/tuikit/widgets/TUIStatusBar.h
     include/tuikit/widgets/TUIToolbar.h
+    include/tuikit/widgets/TUISpinBox.h
+    include/tuikit/widgets/TUIDoubleSpinBox.h
+    include/tuikit/widgets/TUIListView.h
+    include/tuikit/widgets/TUITableView.h
     # Add other headers as they are created
 )
 
@@ -115,6 +119,10 @@ set(TUIKIT_SOURCES
     src/widgets/TUITreeView.cpp
     src/widgets/Notification.cpp
     src/core/TUIKLoader.cpp
+    src/widgets/TUISpinBox.cpp
+    src/widgets/TUIDoubleSpinBox.cpp
+    src/widgets/TUIListView.cpp
+    src/widgets/TUITableView.cpp
     # Add other source files as they are created
 )
 

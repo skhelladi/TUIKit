@@ -23,22 +23,29 @@ The following core components are implemented and functional:
 
 *   `TUIApp`: The entry point for the application.
 *   `TUIWidget`: Base class for all UI components.
-*   `TUILabel`: Displays static text.
-*   `TUITextField`: Editable single-line text input.
 *   `TUIButton`: Interactive button with click events and icon support.
-*   `TUIMenu`: Vertical list of selectable options.
 *   `TUICheckBox`: Simple toggle checkbox.
-*   `TUIRadioBox`: Group of exclusive radio buttons.
+*   `TUICollapsible`: A collapsible container for widgets.
 *   `TUIComboBox`: Dropdown list for selection.
-*   `TUISlider`: Horizontal slider for continuous value selection.
-*   `TUIToolbar`: A bar for action buttons.
+*   `TUIDoubleSpinBox`: Spin box for double-precision floating-point values.
 *   `TUIForm`: Organizes input fields with labels.
 *   `TUIGroupBox`: Groups related widgets with an optional title and border.
-*   `TUITabWidget`: Organizes content into multiple tabs.
-*   `TUIStatusBar`: Displays status messages at the bottom of the application.
-*   `TUITreeView`: Displays hierarchical data in a tree structure.
+*   `TUILabel`: Displays static text.
+*   `TUIListView`: A simple list of selectable string items.
+*   `TUIMenu`: Vertical list of selectable options.
+*   `TUIProgressBar`: A widget to show progress.
+*   `TUIRadioBox`: Group of exclusive radio buttons.
 *   `TUIResizableSplit`: Splitter for resizable panels (horizontal/vertical).
 *   `TUIScrollableContainer`: Scrollable area for any widget (with scrollbar, keyboard and mouse support).
+*   `TUISlider`: Horizontal slider for continuous value selection.
+*   `TUISpinBox`: Spin box for integer values.
+*   `TUIStatusBar`: Displays status messages at the bottom of the application.
+*   `TUITableView`: A widget for displaying data in a table.
+*   `TUITabWidget`: Organizes content into multiple tabs.
+*   `TUITextArea`: A multi-line text editing widget.
+*   `TUITextField`: Editable single-line text input.
+*   `TUIToolbar`: A bar for action buttons.
+*   `TUITreeView`: Displays hierarchical data in a tree structure.
 
 ## 🛠️ Getting Started
 

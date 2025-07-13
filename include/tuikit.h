@@ -27,6 +27,10 @@
 #include "tuikit/widgets/TUITextArea.h"
 #include "tuikit/widgets/TUIProgressBar.h"
 #include "tuikit/widgets/TUIScrollableContainer.h"
+#include "tuikit/widgets/TUIDoubleSpinBox.h"
+#include "tuikit/widgets/TUISpinBox.h"
+#include "tuikit/widgets/TUITableView.h"
+#include "tuikit/widgets/TUIListView.h"
 #include "tuikit/core/TUIConnect.h"
 
 #include "tuikit/core/TUIIcons.h"
@@ -47,17 +51,21 @@ namespace TUIKIT {
     using CheckBox = std::shared_ptr<TUICheckBox>;
     using Collapsible = std::shared_ptr<TUICollapsible>;
     using ComboBox = std::shared_ptr<TUIComboBox>;
+    using DoubleSpinBox = std::shared_ptr<TUIDoubleSpinBox>;
     using Form = std::shared_ptr<TUIForm>;
     using GroupBox = std::shared_ptr<TUIGroupBox>;
     using Label = std::shared_ptr<TUILabel>;
+    using ListView = std::shared_ptr<TUIListView>;
     using Menu = std::shared_ptr<TUIMenu>;
     using ProgressBar = std::shared_ptr<TUIProgressBar>;
     using RadioBox = std::shared_ptr<TUIRadioBox>;
     using ResizableSplit = std::shared_ptr<TUIResizableSplit>;
     using ScrollableContainer = std::shared_ptr<TUIScrollableContainer>;
     using Slider = std::shared_ptr<TUISlider>;
+    using SpinBox = std::shared_ptr<TUISpinBox>;
     using StatusBar = std::shared_ptr<TUIStatusBar>;
     using TabWidget = std::shared_ptr<TUITabWidget>;
+    using TableView = std::shared_ptr<TUITableView>;
     using TextArea = std::shared_ptr<TUITextArea>;
     using TextField = std::shared_ptr<TUITextField>;
     using Toolbar = std::shared_ptr<TUIToolbar>;
@@ -85,6 +93,10 @@ namespace TUIKIT {
         return std::make_shared<TUIComboBox>(options, initial_selected);
     }
 
+    inline DoubleSpinBox doublespinbox(const std::string& label, double initial_value, double min_value, double max_value, double increment) {
+        return std::make_shared<TUIDoubleSpinBox>(label, initial_value, min_value, max_value, increment);
+    }
+
     inline Form form() {
         return std::make_shared<TUIForm>();
     }
@@ -95,6 +107,10 @@ namespace TUIKIT {
 
     inline Label label(const std::string& text = "") {
         return std::make_shared<TUILabel>(text);
+    }
+
+    inline ListView listview(const std::vector<std::string>& items) {
+        return std::make_shared<TUIListView>(items);
     }
 
     inline Menu menu(const std::vector<std::string>& options) {
@@ -121,12 +137,20 @@ namespace TUIKIT {
         return std::make_shared<TUISlider>(label, initial_value, min_value, max_value, increment);
     }
 
+    inline SpinBox spinbox(const std::string& label, int initial_value, int min_value = 0, int max_value = 100, int increment = 1) {
+        return std::make_shared<TUISpinBox>(label, initial_value, min_value, max_value, increment);
+    }
+
     inline StatusBar statusbar(const std::string& message = "") {
         return std::make_shared<TUIStatusBar>(message);
     }
 
     inline TabWidget tabwidget() {
         return std::make_shared<TUITabWidget>();
+    }
+
+    inline TableView tableview(const std::vector<std::string>& headers = {}, const std::vector<std::vector<std::string>>& data = {}) {
+        return std::make_shared<TUITableView>(headers, data);
     }
 
     inline TextArea textarea(const std::string& placeholder = "", const std::string& label = "", int height = 5) {

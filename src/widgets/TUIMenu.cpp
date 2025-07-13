@@ -22,6 +22,10 @@ void TUIMenu::onSelect(OnSelectCallback callback) {
     on_select_callback_ = callback;
 }
 
+void TUIMenu::onEnter(OnEnterCallback callback) {
+    on_enter_callback_ = callback;
+}
+
 int TUIMenu::selectedIndex() const {
     return selected_index_;
 }
@@ -46,6 +50,11 @@ void TUIMenu::update_ftxui_menu_component() {
     option.on_change = [this] {
         if (on_select_callback_) {
             on_select_callback_(selected_index_);
+        }
+    };
+    option.on_enter = [this] {
+        if (on_enter_callback_) {
+            on_enter_callback_(selected_index_);
         }
     };
 

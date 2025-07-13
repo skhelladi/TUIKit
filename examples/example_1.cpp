@@ -5,6 +5,8 @@
 
 using namespace TUIKIT;
 
+// All comments and text are now in English.
+
 class AppSlots {
 public:
     AppSlots(TUIApp& app, Label& button_label, Label& checkbox_label) 
@@ -174,7 +176,46 @@ int main() {
     toolbar_tab_content->addWidget(groupbox("Application Toolbar", toolbar_widget));
 
     // --- Advanced Widgets Tab Content ---
-    auto advanced_widgets_content = vbox();
+    // Left side: SpinBox, ListView, TreeView, Split, Scrollable, TUITableView, spinbox, doublespinbox
+    // Vertical layout: left/right with stretch
+    auto left_advanced_group = vbox();
+    // Vertical layout: top/bottom with stretch
+    auto right_advanced_group = vbox();
+    // Horizontal layout: left/right with stretch
+    auto advanced_widgets_content = hbox();
+
+    // SpinBox and DoubleSpinBox Example
+    auto spin_box_group = vbox();
+    auto spin_box_label = label("SpinBox Value: 50");
+    auto spin_box = spinbox("Spin", 50, 0, 100, 1);
+    spin_box->setValue(50);
+    connect(spin_box, [&](int value) {
+        spin_box_label->setText("SpinBox Value: " + std::to_string(value));
+    });
+    auto double_spin_box_label = label("DoubleSpinBox Value: 5.0");
+    auto double_spin_box = doublespinbox("Double", 5.0, 0.0, 10.0, 0.5);
+    connect(double_spin_box, [&](double value) {
+        double_spin_box_label->setText("DoubleSpinBox Value: " + std::to_string(value));
+    });
+    spin_box_group->addWidget(spin_box);
+    spin_box_group->addWidget(spin_box_label);
+    spin_box_group->addWidget(double_spin_box);
+    spin_box_group->addWidget(double_spin_box_label);
+    right_advanced_group->addWidget(groupbox("Spin Boxes", spin_box_group));
+
+    // TUIListView Example
+    auto list_view_group = vbox();
+    std::vector<std::string> list_items = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
+    auto list_view = listview(list_items);
+    auto list_view_label = label("Selected List Item: None");
+    connect(list_view, [&](int selected_index) {
+        if (selected_index >= 0 && (size_t)selected_index < list_items.size()) {
+            list_view_label->setText("Selected List Item: " + list_items[selected_index]);
+        }
+    });
+    list_view_group->addWidget(list_view);
+    list_view_group->addWidget(list_view_label);
+    left_advanced_group->addWidget(groupbox("List View", list_view_group));
 
     // TUITreeView Example
     TreeNode root_tree_node = {"Root", {
@@ -193,7 +234,7 @@ int main() {
     auto tree_view_group = vbox();
     tree_view_group->addWidget(tree_view);
     tree_view_group->addWidget(tree_view_label);
-    advanced_widgets_content->addWidget(groupbox("Tree View", tree_view_group));
+    left_advanced_group->addWidget(groupbox("Tree View", tree_view_group));
 
     // TUIResizableSplit Example
     auto left_panel = label("Left Panel");
@@ -216,7 +257,29 @@ int main() {
     auto scrollable_group = vbox();
     scrollable_group->addWidget(scrollable_container_widget);
     scrollable_group->addWidget(scroll_selected_label);
-    advanced_widgets_content->addWidget(groupbox("Scrollable Container", scrollable_group));
+    left_advanced_group->addWidget(groupbox("Scrollable Container", scrollable_group));
+
+    // Right side: TableView
+    auto table_view_group = vbox();
+    std::vector<std::string> table_headers = {"Name", "Age   ", "City   "};
+    std::vector<std::vector<std::string>> table_data = {
+        {"John Doe", "30", "New York"},
+        {"Jane Smith", "25", "London"},
+        {"Sam Green", "35", "Paris"}
+    };
+    auto table_view = tableview(table_headers, table_data);
+    auto table_view_label = label("Selected Table Cell: None");
+    connect(table_view, [&](int row, int col) {
+        if (row >= 0 && col >= 0) {
+            table_view_label->setText("Selected Table Cell: (Row: " + std::to_string(row) + ", Col: " + std::to_string(col) + ")");
+        }
+    });
+    table_view_group->addWidget(table_view);
+    table_view_group->addWidget(table_view_label);
+    right_advanced_group->addWidget(groupbox("Table View", table_view_group));
+
+    advanced_widgets_content->addWidget(left_advanced_group);
+    advanced_widgets_content->addWidget(right_advanced_group);
 
     // --- Tab Widget ---
     auto tab_widget = tabwidget();
