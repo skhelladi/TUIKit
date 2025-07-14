@@ -51,7 +51,7 @@ The following core components are implemented and functional:
 
 ### Prerequisites
 
-*   **C++17 Compiler**: A compiler that supports C++17 (e.g., GCC, Clang, MSVC).
+*   **C++17/20 Compiler**: A compiler that supports C++17/20 (e.g., GCC, Clang, MSVC).
 *   **CMake**: Version 3.15 or higher.
 *   **FTXUI**: A terminal UI library that TUIKit is built upon.
 *   **nlohmann/json**: For JSON parsing, used in `.tuik` file handling.
