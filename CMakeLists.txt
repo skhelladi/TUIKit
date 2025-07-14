@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(TUIFramework VERSION 0.2 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20) # 17 is also fine, but 20 is more modern
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -134,6 +134,11 @@ set(EXAMPLE_2_SOURCES
     examples/example_2.cpp
 )
 
+set(OPENFOAM_TUI_SOURCES
+    examples/openfoam_tui/openfoam_tui.cpp
+    examples/openfoam_tui/OpenFoamParameters.cpp
+)
+
 set(FTXUI_TEST_SOURCES
     examples/ftxui_test.cpp
 )
@@ -163,6 +168,14 @@ target_link_libraries(example_1 PRIVATE tuikit)
 
 add_executable(example_2 ${EXAMPLE_2_SOURCES})
 target_link_libraries(example_2 PRIVATE tuikit)
+
+# =============================================================================
+# OPENFOAM TUI EXECUTABLE
+# =============================================================================
+
+add_executable(openfoam_tui ${OPENFOAM_TUI_SOURCES})
+target_link_libraries(openfoam_tui PRIVATE tuikit)
+
 
 
 

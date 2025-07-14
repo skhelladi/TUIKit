@@ -20,11 +20,15 @@ public:
     double value() const;
     void setValue(double value);
 
+    void setReadOnly(bool read_only);
+    bool isReadOnly() const;
+
 private:
     std::string value_str_;
     double value_;
     double min_;
     double max_;
+    bool read_only_ = false;
     OnChangeCallback on_change_;
     OnEnterCallback on_enter_;
 };

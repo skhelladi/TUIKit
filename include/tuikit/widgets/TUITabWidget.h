@@ -9,9 +9,14 @@
 
 namespace TUIKIT {
 
+enum class TabOrientation {
+    Horizontal,
+    Vertical
+};
+
 class TUITabWidget : public TUIWidget {
 public:
-    TUITabWidget(TUIWidget* parent = nullptr);
+    TUITabWidget(TabOrientation orientation = TabOrientation::Horizontal, TUIWidget* parent = nullptr);
     ~TUITabWidget() override = default;
 
     void addTab(const std::string& title, std::shared_ptr<TUIWidget> content_widget);
@@ -25,6 +30,7 @@ private:
     std::vector<std::string> tab_icons_;
     std::vector<ftxui::Component> tab_ftxui_components_;
     int selected_tab_index_ = 0;
+    TabOrientation orientation_;
 
     void update_ftxui_tab_component();
 };

@@ -18,13 +18,18 @@ public:
     void onChange(OnChangeCallback cb);
     std::string text() const;
     void setText(const std::string& text);
+    void setReadOnly(bool read_only);
+    bool isReadOnly() const;
 
 private:
     std::string value_;
     std::string placeholder_;
     std::string label_;
     int height_;
+    bool read_only_ = false;
     OnChangeCallback on_change_;
+    ftxui::Component input_ftxui_component_;
+    ftxui::InputOption input_options_;
 };
 
 } // namespace TUIKIT

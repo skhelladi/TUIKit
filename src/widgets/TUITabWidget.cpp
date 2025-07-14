@@ -3,7 +3,7 @@
 
 namespace TUIKIT {
 
-TUITabWidget::TUITabWidget(TUIWidget* /*parent*/) : TUIWidget(ftxui::Component()) {
+TUITabWidget::TUITabWidget(TabOrientation orientation, TUIWidget* /*parent*/) : TUIWidget(ftxui::Component()), orientation_(orientation) {
     update_ftxui_tab_component();
 }
 
@@ -30,10 +30,17 @@ int TUITabWidget::currentIndex() const {
 void TUITabWidget::update_ftxui_tab_component() {
     auto toggle = ftxui::Toggle(&tab_titles_, &selected_tab_index_); 
     auto tab_container = ftxui::Container::Tab(tab_ftxui_components_, &selected_tab_index_);
-    component_ = ftxui::Container::Vertical({
-        toggle,
-        tab_container
-    });
+    if (orientation_ == TabOrientation::Horizontal) {
+        component_ = ftxui::Container::Vertical({
+            toggle,
+            tab_container
+        });
+    } else {
+        component_ = ftxui::Container::Horizontal({
+            toggle,
+            tab_container
+        });
+    }
 }
 
 } // namespace TUIKIT

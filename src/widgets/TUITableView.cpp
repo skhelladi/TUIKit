@@ -119,6 +119,7 @@ namespace TUIKIT
                 return input_component_->OnEvent(event); // Pass other events to input
             } else {
                 if (event == ftxui::Event::Return) {
+                    if (read_only_) return false;
                     if (selected_row_ >= 0 && selected_row_ < (int)data_.size() && selected_col_ >= 0 && selected_col_ < (int)headers_.size()) {
                         is_editing_ = true;
                         editing_text_ = data_[selected_row_][selected_col_];
@@ -149,6 +150,16 @@ namespace TUIKIT
     void TUITableView::onEditComplete(OnEditCompleteCallback cb)
     {
         on_edit_complete_ = cb;
+    }
+
+    void TUITableView::setReadOnly(bool read_only)
+    {
+        read_only_ = read_only;
+    }
+
+    bool TUITableView::isReadOnly() const
+    {
+        return read_only_;
     }
 
 }

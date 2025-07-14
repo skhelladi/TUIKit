@@ -23,11 +23,15 @@ namespace TUIKIT
         int value() const;
         void setValue(int value);
 
+        void setReadOnly(bool read_only);
+        bool isReadOnly() const;
+
     private:
         std::string value_str_;
         int value_;
         int min_;
         int max_;
+        bool read_only_ = false;
         OnChangeCallback on_change_;
         OnEnterCallback on_enter_;
     };

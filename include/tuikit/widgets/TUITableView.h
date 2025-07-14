@@ -19,6 +19,9 @@ public:
     void onEnter(OnEnterCallback cb);
     void onEditComplete(OnEditCompleteCallback cb);
 
+    void setReadOnly(bool read_only);
+    bool isReadOnly() const;
+
 private:
     std::vector<std::string> headers_;
     std::vector<std::vector<std::string>> data_;
@@ -28,6 +31,7 @@ private:
     int selected_row_ = 0;
     int selected_col_ = 0;
     bool is_editing_ = false;
+    bool read_only_ = false;
     std::string editing_text_;
     ftxui::Component input_component_;
     ftxui::Component table_component_; // New member for the table component

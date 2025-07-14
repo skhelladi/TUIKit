@@ -145,8 +145,8 @@ namespace TUIKIT {
         return std::make_shared<TUIStatusBar>(message);
     }
 
-    inline TabWidget tabwidget() {
-        return std::make_shared<TUITabWidget>();
+    inline TabWidget tabwidget(TabOrientation orientation = TabOrientation::Horizontal) {
+        return std::make_shared<TUITabWidget>(orientation);
     }
 
     inline TableView tableview(const std::vector<std::string>& headers = {}, const std::vector<std::vector<std::string>>& data = {}) {

@@ -59,11 +59,21 @@ int main() {
         input_label->setText("Input: " + new_text);
     });
 
+    // auto read_only_text_field = textfield("This is read-only");
+    // read_only_text_field->setReadOnly(true);
+
+    auto text_area_widget = textarea("Enter multiline text here", "", 2);
+    // auto read_only_text_area = textarea("This is a read-only textarea");
+    // read_only_text_area->setReadOnly(true);
+
     auto button_widget = button("Show Input");
     button_widget->setIcon(ICON::Rocket);
     connect(button_widget, &slots, &AppSlots::handleButtonClick);
 
     input_button_layout->addWidget(text_field_widget);
+    // input_button_layout->addWidget(read_only_text_field);
+    input_button_layout->addWidget(text_area_widget);
+    // input_button_layout->addWidget(read_only_text_area);
     input_button_layout->addWidget(button_widget);
 
     auto input_button_group = vbox();
@@ -281,6 +291,16 @@ int main() {
     advanced_widgets_content->addWidget(left_advanced_group);
     advanced_widgets_content->addWidget(right_advanced_group);
 
+    // --- Vertical Tab Widget Example ---
+    auto vertical_tab_content_1 = vbox();
+    vertical_tab_content_1->addWidget(label("Content for Vertical Tab 1"));
+    auto vertical_tab_content_2 = vbox();
+    vertical_tab_content_2->addWidget(label("Content for Vertical Tab 2"));
+
+    auto vertical_tab_widget = tabwidget(TabOrientation::Vertical);
+    vertical_tab_widget->addTab("Vert Tab 1", vertical_tab_content_1);
+    vertical_tab_widget->addTab("Vert Tab 2", vertical_tab_content_2);
+
     // --- Tab Widget ---
     auto tab_widget = tabwidget();
     tab_widget->addTab("Main Widgets", main_widgets_content, ICON::Home);
@@ -289,6 +309,7 @@ int main() {
     tab_widget->addTab("Form & Status", form_status_tab_content, ICON::Tasks);
     tab_widget->addTab("Toolbar", toolbar_tab_content, ICON::NewFile);
     tab_widget->addTab("Advanced Widgets", advanced_widgets_content, ICON::Tasks);
+    tab_widget->addTab("Vertical Tabs", vertical_tab_widget, ICON::Tasks);
 
     // --- Main Layout ---
     auto main_layout = vbox();

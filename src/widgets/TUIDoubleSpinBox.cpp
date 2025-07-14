@@ -14,6 +14,7 @@ namespace TUIKIT
 {
     ftxui::InputOption option;
     option.on_change = [this] {
+        if (read_only_) return;
         try {
             double new_value = std::stod(value_str_);
             if (new_value >= min_ && new_value <= max_) {
@@ -30,6 +31,7 @@ namespace TUIKIT
     };
 
     option.on_enter = [this] {
+        if (read_only_) return;
         if (on_enter_) {
             on_enter_();
         }
@@ -39,6 +41,7 @@ namespace TUIKIT
 
     // Wrap the input_component to handle ArrowUp/ArrowDown events
     component_ = ftxui::CatchEvent(input_component, [this, increment](ftxui::Event event) {
+        if (read_only_) return false;
         if (event == ftxui::Event::ArrowRight) {
             setValue(value_ + increment);
             value_str_ = std::to_string(value_);
@@ -93,5 +96,15 @@ namespace TUIKIT
         {
             value_ = value;
         }
+    }
+
+    void TUIDoubleSpinBox::setReadOnly(bool read_only)
+    {
+        read_only_ = read_only;
+    }
+
+    bool TUIDoubleSpinBox::isReadOnly() const
+    {
+        return read_only_;
     }
 }

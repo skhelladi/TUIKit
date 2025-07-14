@@ -15,10 +15,14 @@ public:
     void onEnter(OnEnterCallback cb);
 
     std::string text() const;
+    void setReadOnly(bool read_only);
+    bool isReadOnly() const;
 
 private:
     std::string value_;
+    bool read_only_ = false;
     OnChangeCallback on_change_;
     OnEnterCallback on_enter_;
+    ftxui::Component input_ftxui_component_;
 };
 }
