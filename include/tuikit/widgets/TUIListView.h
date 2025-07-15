@@ -19,6 +19,12 @@ public:
 
     int selectedIndex() const;
     void setSelectedIndex(int index);
+    std::string selectedText() const;
+
+    void setItems(const std::vector<std::string>& items);
+
+private:
+    void update_ftxui_menu_component();
 
 private:
     std::vector<std::string> items_;
