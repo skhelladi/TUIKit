@@ -46,14 +46,11 @@ int main() {
     for (int i = 0; i < 12; ++i) samples->append(i * 6.0 / 11.0, damped(i * 6.0 / 11.0));
     for (int i = 0; i <= 300; ++i) model->append(-1.0 + 8.0 * i / 300.0, damped(-1.0 + 8.0 * i / 300.0));
 
-    auto column = vbox();
-    column->addWidget(cpu_plot);
-    column->addWidget(fixed);
-    auto row = hbox();
-    row->addWidget(convergence);
-    row->addWidget(column);
+    // Full-width layout: one plot per row, each stretched to the whole terminal width.
     auto root = vbox();
-    root->addWidget(row);
+    root->addWidget(convergence);
+    root->addWidget(cpu_plot);
+    root->addWidget(fixed);
     root->addWidget(label(std::string("up/down: change graph   ") + TUIPlot::kHelp));
     app.setMainWidget(root);
     convergence->get_ftxui_component()->TakeFocus();  // no widget has the focus at startup: give the keys to the first graph
