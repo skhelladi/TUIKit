@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream> // Required for file redirection
+#include <cstdlib>
 
 using namespace TUIKIT;
 
@@ -35,6 +36,10 @@ int main() {
     std::ofstream cerr_log("debug_log.txt");
     std::streambuf* old_cerr_buf = std::cerr.rdbuf();
     std::cerr.rdbuf(cerr_log.rdbuf());
+
+    // Force truecolor support on macOS terminals
+    setenv("COLORTERM", "truecolor", 1);
+    setenv("TERM", "xterm-256color", 1);
 
     TUIApp app("My TUIKIT Application");
 
@@ -154,6 +159,7 @@ int main() {
     auto theme_combobox = combobox(theme_options, 0);
     connect(theme_combobox, [&](int idx) {
         TUIStyle::instance().setGlobalTheme(static_cast<Theme>(idx));
+        app.PostEvent(ftxui::Event::Custom);
         app.request_redraw();
     });
     theme_tab_content->addWidget(theme_combobox);
