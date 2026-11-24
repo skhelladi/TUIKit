@@ -21,7 +21,7 @@ public:
 private:
     std::shared_ptr<TUIWidget> first_widget_;
     std::shared_ptr<TUIWidget> second_widget_;
-    Orientation orientation_;
+    [[maybe_unused]] Orientation orientation_;
     int main_size_ = 0; // To store the size of the main panel for resizable split
     int min_first_ = 0;
     int min_second_ = 0;

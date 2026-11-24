@@ -64,6 +64,13 @@ The following core components are implemented and functional:
     cd TUIKit
     ```
 2.  **Install dependencies:**
+
+    You can install all dependencies and build the project in one step using the provided script:
+    ```bash
+    ./install.sh
+    ```
+
+    Or manually:
     - Install FTXUI:
     You need to clone it into the `external/ftxui` directory:
     ```bash

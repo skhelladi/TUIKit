@@ -25,7 +25,7 @@ std::string TUITextField::text() const {
 void TUITextField::setReadOnly(bool read_only) {
     read_only_ = read_only;
     if (read_only_) {
-        component_ = ftxui::CatchEvent(input_ftxui_component_, [](ftxui::Event event) { return true; }) | ftxui::color(ftxui::Color::GrayDark) | ftxui::bgcolor(ftxui::Color::Black);
+        component_ = ftxui::CatchEvent(input_ftxui_component_, [](ftxui::Event /*event*/) { return true; }) | ftxui::color(ftxui::Color::GrayDark) | ftxui::bgcolor(ftxui::Color::Black);
     } else {
         component_ = input_ftxui_component_;
     }

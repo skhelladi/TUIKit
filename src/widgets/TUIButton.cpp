@@ -5,9 +5,9 @@
 namespace TUIKIT {
 
 TUIButton::TUIButton(const std::string& text, TUIWidget* /*parent*/)
-    : original_text_(text), text_(text), TUIWidget(ftxui::Button(&text_, [this] { 
+    : TUIWidget(ftxui::Button(&text_, [this] { 
         if (on_clicked_) on_clicked_(); 
-    })) {}
+    })), original_text_(text), text_(text) {}
 
 void TUIButton::onClick(OnClickedCallback callback) {
     on_clicked_ = callback;

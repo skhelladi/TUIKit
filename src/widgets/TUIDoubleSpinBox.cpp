@@ -9,8 +9,8 @@ namespace TUIKIT
 {
 
     TUIDoubleSpinBox::TUIDoubleSpinBox(const std::string& label, double initial_value, double min, double max, 
-    double increment, TUIWidget* parent)
-    : value_str_(std::to_string(initial_value)), TUIWidget(ftxui::Input(&value_str_, label)), value_(initial_value), min_(min), max_(max), on_change_(nullptr), on_enter_(nullptr)
+    double increment, TUIWidget* /*parent*/)
+    : TUIWidget(ftxui::Input(&value_str_, label)), value_str_(std::to_string(initial_value)), value_(initial_value), min_(min), max_(max), on_change_(nullptr), on_enter_(nullptr)
 {
     ftxui::InputOption option;
     option.on_change = [this] {
@@ -75,12 +75,12 @@ namespace TUIKIT
         on_enter_ = cb;
     }
 
-    void TUIDoubleSpinBox::onIncrement(OnChangeCallback cb)
+    void TUIDoubleSpinBox::onIncrement(OnChangeCallback /*cb*/)
     {
         // Not directly used, handled internally by on_event
     }
 
-    void TUIDoubleSpinBox::onDecrement(OnChangeCallback cb)
+    void TUIDoubleSpinBox::onDecrement(OnChangeCallback /*cb*/)
     {
         // Not directly used, handled internally by on_event
     }
