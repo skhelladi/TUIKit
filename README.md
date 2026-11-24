@@ -193,6 +193,11 @@ if (reader.poll(rows)) {  // call periodically
 
 See `examples/example_plot.cpp`.
 
+<p align="center">
+    <img src="docs/example_plot.gif" alt="Demo of TUIPlot in action"><br>
+    <strong>See <code>example_plot.cpp</code></strong><br>
+</p>
+
 ---
 
 ## 🆕 Example: Embedding a `.tuik` UI file
