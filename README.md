@@ -9,6 +9,12 @@ Based on [FTXUI](https://github.com/ArthurSonzogni/FTXUI), TUIKit is a modern C+
     <strong>See <code>example_1.cpp</code></strong><br>
 </p>
 
+<p align="center">
+    <img src="docs/example_plot.gif" alt="Demo of TUIPlot in action"><br>
+    <strong>See <code>example_plot.cpp</code></strong><br>
+</p>
+
+
 ## 🧩 Core Principles (Qt-like Philosophy)
 
 *   **Hierarchical Widgets:** Utilize a structured hierarchy of UI components (`TUIWidget`, `TUIForm`, `TUIMenu`, etc.).
@@ -191,12 +197,7 @@ if (reader.poll(rows)) {  // call periodically
 }
 ```
 
-See `examples/example_plot.cpp`.
-
-<p align="center">
-    <img src="docs/example_plot.gif" alt="Demo of TUIPlot in action"><br>
-    <strong>See <code>example_plot.cpp</code></strong><br>
-</p>
+See `examples/example_plot.cpp` above.
 
 ---
 
