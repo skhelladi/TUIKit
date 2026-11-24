@@ -31,6 +31,8 @@
 #include "tuikit/widgets/TUISpinBox.h"
 #include "tuikit/widgets/TUITableView.h"
 #include "tuikit/widgets/TUIListView.h"
+#include "tuikit/plotting/TUIPlot.h"
+#include "tuikit/io/TUICSVTailReader.h"
 #include "tuikit/core/TUIConnect.h"
 
 #include "tuikit/core/TUIIcons.h"
@@ -70,6 +72,7 @@ namespace TUIKIT {
     using TextField = std::shared_ptr<TUITextField>;
     using Toolbar = std::shared_ptr<TUIToolbar>;
     using TreeView = std::shared_ptr<TUITreeView>;
+    using Plot = std::shared_ptr<TUIPlot>;
 
     // Layout Aliases
     using Layout = std::shared_ptr<TUILayout>;
@@ -77,6 +80,7 @@ namespace TUIKIT {
     using VBoxLayout = std::shared_ptr<TUIVBoxLayout>;
 
     // Factory Functions
+    inline Plot plot(const std::string& title = "") { return std::make_shared<TUIPlot>(title); }
     inline Button button(const std::string& text) {
         return std::make_shared<TUIButton>(text);
     }

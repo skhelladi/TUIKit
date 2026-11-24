@@ -86,6 +86,10 @@ set(TUIKIT_HEADERS
     include/tuikit/widgets/TUIDoubleSpinBox.h
     include/tuikit/widgets/TUIListView.h
     include/tuikit/widgets/TUITableView.h
+    include/tuikit/plotting/TUIPlot.h
+    include/tuikit/plotting/TUIPlotAxis.h
+    include/tuikit/plotting/TUIPlotSeries.h
+    include/tuikit/io/TUICSVTailReader.h
     # Add other headers as they are created
 )
 
@@ -123,6 +127,10 @@ set(TUIKIT_SOURCES
     src/widgets/TUIDoubleSpinBox.cpp
     src/widgets/TUIListView.cpp
     src/widgets/TUITableView.cpp
+    src/plotting/TUIPlot.cpp
+    src/plotting/TUIPlotAxis.cpp
+    src/plotting/TUIPlotSeries.cpp
+    src/io/TUICSVTailReader.cpp
     # Add other source files as they are created
 )
 
@@ -176,6 +184,13 @@ target_link_libraries(example_2 PRIVATE tuikit)
 add_executable(openfoam_tui ${OPENFOAM_TUI_SOURCES})
 target_link_libraries(openfoam_tui PRIVATE tuikit)
 
+# =============================================================================
+# PLOT EXAMPLE EXECUTABLE
+# =============================================================================
+
+add_executable(example_plot examples/example_plot.cpp)
+target_link_libraries(example_plot PRIVATE tuikit)
+
 
 
 
@@ -188,6 +203,8 @@ install(FILES include/tuikit.h DESTINATION include)
 install(DIRECTORY include/tuikit/core/ DESTINATION include/tuikit/core FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY include/tuikit/layouts/ DESTINATION include/tuikit/layouts FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY include/tuikit/widgets/ DESTINATION include/tuikit/widgets FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY include/tuikit/plotting/ DESTINATION include/tuikit/plotting FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY include/tuikit/io/ DESTINATION include/tuikit/io FILES_MATCHING PATTERN "*.h")
 
 # Library installation
 install(TARGETS tuikit

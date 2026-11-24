@@ -46,6 +46,7 @@ The following core components are implemented and functional:
 *   `TUITextField`: Editable single-line text input.
 *   `TUIToolbar`: A bar for action buttons.
 *   `TUITreeView`: Displays hierarchical data in a tree structure.
+*   `TUIPlot`: Plots several curves (live or streamed from a CSV file) with fixed/auto ranges, major/minor grid, legend, crosshair, zoom and pan.
 
 ## 🛠️ Getting Started
 
@@ -105,6 +106,11 @@ and
 ./build/example_2
 ```
 
+and the plotting demo (live curves, CSV tail, fixed ranges):
+```bash
+./build/example_plot
+```
+
 ## 🧪 Usage Example
 
 Here's a minimal example demonstrating how to create a simple TUI application with TUIKit, showcasing factory functions and the `connect` mechanism for event handling.
@@ -138,6 +144,54 @@ int main() {
     return app.exec();
 }
 ```
+
+---
+
+## 📈 Plotting with `TUIPlot`
+
+`TUIPlot` draws several curves on one graph, from live data (solver running) or from a CSV
+file read while it grows.
+
+* **Series**: `addSeries(name)` returns a `TUIPlotSeries`. Push points with `append(x, y)` from
+  any thread, then call `app.PostEvent(ftxui::Event::Custom)` to request a repaint.
+* **Curve style**: `setColor`, `setLineStyle` (`None`, `Solid`, `Dashed`, `Dotted`),
+  `setLineWidth` (1 to 3), `setMarker` (`Circle`, `Square`, `Triangle`, `Diamond`, `Plus`,
+  `Cross`), `setMarkerStride`.
+* **Axes**: `xAxis()` / `yAxis()` with `setRange(min, max)` (fixed), `setAutoRange()` (default:
+  data extent + 5 %), `setFollowTail(width)` (sliding window), `setAutoLimits`, `setLabel`,
+  `setTickFormat`, `setTickStep`, `setMajorGrid`, `setMinorGrid`.
+* **Keys**, on the graph having the focus: `+` / `-` zoom, `,` / `.` pan, `z` reset, `c`
+  crosshair then left/right, `l` legend, `g` grid.
+
+```cpp
+auto p = plot("Convergence");
+p->xAxis().setLabel("iteration").setFollowTail(500);
+p->yAxis().setLabel("residual");
+auto residuals = p->addSeries("Ux");
+residuals->setLineStyle(TUIPlotLineStyle::Dashed).setMarker(TUIPlotMarker::Circle);
+layout->addWidget(p);
+
+// From a worker thread:
+residuals->append(iteration, value);
+app.PostEvent(ftxui::Event::Custom);
+```
+
+### Streaming a CSV file
+
+`TUICSVTailReader` follows a CSV file as it grows. The first line is either a header with the
+column names or data (the columns are then named `col1`, `col2`, ...). Fields are separated
+by `,`, by `;` (a comma is then read as the decimal mark) or by whitespace.
+
+```cpp
+TUICSVTailReader reader("monitor.csv");
+reader.setColumns("Time", "CPU");  // or setColumns(0, 1)
+std::vector<std::pair<double, double>> rows;
+if (reader.poll(rows)) {  // call periodically
+    for (const auto& [time, load] : rows) cpu_series->append(time, load);
+}
+```
+
+See `examples/example_plot.cpp`.
 
 ---
 
