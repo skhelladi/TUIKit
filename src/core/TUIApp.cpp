@@ -28,13 +28,28 @@ void TUIApp::PostEvent(ftxui::Event event) {
 }
 
 void TUIApp::show_modal(ftxui::Component modal) {
+    // Lazily create the modal layer. It is attached to the component tree in
+    // exec() even when no modal is visible yet, so dialogs shown at runtime
+    // (button click) actually receive events.
+    if (!modal_container_) {
+        modal_container_ = ftxui::Container::Vertical({});
+        modal_layer_ = ftxui::Maybe(modal_container_, &show_modal_);
+    }
+    modal_container_->DetachAllChildren();
+    modal_container_->Add(modal);
     modal_ = modal;
     show_modal_ = true;
+    modal_container_->TakeFocus();
+    request_redraw();
 }
 
 void TUIApp::close_modal() {
     show_modal_ = false;
+    if (modal_container_) {
+        modal_container_->DetachAllChildren();
+    }
     modal_ = nullptr;
+    request_redraw();
 }
 
 std::shared_ptr<TUIWidget> TUIApp::loadUI(const std::string& filepath) {
@@ -116,7 +131,7 @@ int TUIApp::exec() {
         main_content_component = main_widget_->get_ftxui_component();
     }
 
-    auto final_interactive_root = ftxui::Renderer(main_content_component, [&] {
+    auto final_interactive_root = ftxui::Renderer([&] {
         auto& theme = TUIStyle::instance().currentTheme();
         ftxui::Element decorated_view = ftxui::vbox({
             ftxui::text(title_) | ftxui::bold | ftxui::center | ftxui::color(theme.primary),
@@ -138,9 +153,15 @@ int TUIApp::exec() {
         return decorated_view;
     });
 
-    if (show_modal_ && modal_) {
-        final_interactive_root = ftxui::Container::Vertical({final_interactive_root, ftxui::Maybe(modal_, &show_modal_)});
+    // The modal layer is the first child so that an open dialog receives
+    // events before the main content behind it. Maybe() makes it fully
+    // transparent (no render, no events, no focus) while show_modal_ is false.
+    if (!modal_layer_) {
+        modal_container_ = ftxui::Container::Vertical({});
+        modal_layer_ = ftxui::Maybe(modal_container_, &show_modal_);
     }
+    final_interactive_root->Add(modal_layer_);
+    final_interactive_root->Add(main_content_component);
 
     screen_.Loop(final_interactive_root);
 

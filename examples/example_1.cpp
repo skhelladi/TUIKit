@@ -328,14 +328,25 @@ int main() {
     auto file_dialog_label = label("Picked file: (none)");
     auto pick_file_button = button("Open File...");
     connect(pick_file_button, [&app, file_dialog_label] {
-        TUIFileDialog::pickFile(app, ".", {"*.json", "*.txt", "*.cpp"},
+        TUIFileDialog::pickFile(app, ".", {"*.json", "*.txt", "*.cpp", "*.h"},
                                 FileDialogMode::OpenFile,
                                 [file_dialog_label](const std::string& path) {
                                     file_dialog_label->setText("Picked file: " + (path.empty() ? "(cancelled)" : path));
                                 });
     });
+    auto save_file_button = button("Save File As...");
+    connect(save_file_button, [&app, file_dialog_label] {
+        TUIFileDialog::pickFile(app, ".", {"*.json", "*.txt"},
+                                FileDialogMode::SaveFile,
+                                [file_dialog_label](const std::string& path) {
+                                    file_dialog_label->setText("Save target: " + (path.empty() ? "(cancelled)" : path));
+                                });
+    });
     auto file_dialog_group = vbox();
-    file_dialog_group->addWidget(pick_file_button);
+    auto file_dialog_buttons = hbox();
+    file_dialog_buttons->addWidget(pick_file_button);
+    file_dialog_buttons->addWidget(save_file_button);
+    file_dialog_group->addWidget(file_dialog_buttons);
     file_dialog_group->addWidget(file_dialog_label);
     toolbar_tab_content->addWidget(groupbox("File Dialog", file_dialog_group));
 

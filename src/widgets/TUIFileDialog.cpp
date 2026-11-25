@@ -3,6 +3,7 @@
 #include "tuikit/core/TUIStyle.h"
 #include <algorithm>
 #include <cctype>
+#include <cstdlib>
 #include <filesystem>
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
@@ -22,6 +23,16 @@ std::string toLower(const std::string& input) {
     std::transform(result.begin(), result.end(), result.begin(),
                    [](unsigned char c) { return static_cast<char>(std::tolower(c)); });
     return result;
+}
+
+/// Expand a leading "~" to the user's home directory.
+std::string expandTilde(const std::string& path) {
+    if (path.empty() || path[0] != '~') return path;
+    const char* home = std::getenv("HOME");
+    if (!home) return path;
+    if (path.size() == 1) return home;
+    if (path[1] == '/') return std::string(home) + path.substr(1);
+    return path;
 }
 
 /// Minimal wildcard match supporting '*' only (e.g. "*.json").
@@ -58,8 +69,13 @@ public:
                    FileDialogMode mode, TUIFileDialog::Callback callback)
         : app_(app), filters_(std::move(filters)), mode_(mode), callback_(std::move(callback)) {
         std::error_code ec;
-        fs::path dir = fs::absolute(start_dir, ec);
-        current_dir_ = (ec || dir.empty()) ? fs::path(".") : dir;
+        fs::path dir = fs::absolute(expandTilde(start_dir), ec);
+        // Fall back to the working directory when the start dir is unusable.
+        if (ec || dir.empty() || !fs::is_directory(dir, ec)) {
+            dir = fs::current_path(ec);
+            if (ec) dir = fs::path(".");
+        }
+        current_dir_ = dir;
     }
 
     /// Must be called once the impl is owned by a shared_ptr.
@@ -108,7 +124,10 @@ private:
             if (hidden && !show_hidden_) continue;
             std::error_code dir_ec;
             const bool is_dir = it->is_directory(dir_ec);
-            if (!is_dir && mode_ != FileDialogMode::SelectDirectory && !matchesFilters(name)) {
+            if (mode_ == FileDialogMode::SelectDirectory && !is_dir) {
+                continue; // Only directories are relevant in directory mode.
+            }
+            if (!is_dir && !matchesFilters(name)) {
                 continue;
             }
             entries_.push_back({name, is_dir});
@@ -158,11 +177,25 @@ private:
             return;
         }
         if (entry.is_dir) {
-            current_dir_ /= entry.name;
-            refresh();
+            enterSelectedDirectory();
             return;
         }
         accept();
+    }
+
+    /// In SelectDirectory mode Enter selects the highlighted directory;
+    /// otherwise (and via the dedicated EnterDirectory key) it navigates in.
+    void enterSelectedDirectory() {
+        if (selected_ < 0 || selected_ >= static_cast<int>(entries_.size())) {
+            return;
+        }
+        const Entry& entry = entries_[selected_];
+        if (entry.name != ".." && entry.is_dir && mode_ == FileDialogMode::SelectDirectory) {
+            finish(current_dir_ / entry.name);
+            return;
+        }
+        current_dir_ /= entry.name;
+        refresh();
     }
 
     void finish(const fs::path& path) {
@@ -174,7 +207,8 @@ private:
 
     void accept() {
         std::error_code ec;
-        fs::path p(path_input_);
+        std::string raw_path = expandTilde(path_input_);
+        fs::path p(raw_path);
         if (p.is_relative()) {
             p = current_dir_ / p;
         }
@@ -273,6 +307,12 @@ private:
             goUp();
             return true;
         }
+        if (event == Event::ArrowRight) {
+            // Dedicated "navigate into directory" key (Enter selects in
+            // SelectDirectory mode instead of navigating).
+            enterSelectedDirectory();
+            return true;
+        }
         if (event == Event::Return) {
             activateEntry();
             return true;
@@ -329,8 +369,11 @@ private:
             filters_text += f;
         }
 
-        // Keep the selected row inside the visible window.
-        list_height_ = std::max(1, list_box_.y_max - list_box_.y_min + 1);
+        // Keep the selected row inside the visible window. The box is only
+        // trusted after the first real layout pass (degenerate otherwise).
+        if (list_box_.y_max >= list_box_.y_min) {
+            list_height_ = std::max(1, list_box_.y_max - list_box_.y_min + 1);
+        }
         const int total = static_cast<int>(entries_.size());
         if (selected_ < first_visible_) first_visible_ = selected_;
         if (selected_ >= first_visible_ + list_height_) first_visible_ = selected_ - list_height_ + 1;
@@ -370,7 +413,7 @@ private:
         if (!error_.empty()) {
             dialog_rows.push_back(text(error_) | color(theme.error));
         }
-        dialog_rows.push_back(text("Enter: select  Backspace: parent  Tab: edit path  h: hidden  Esc: cancel") | dim);
+        dialog_rows.push_back(text("Enter: select  Right: open dir  Backspace: parent  Tab: edit path  h: hidden  Esc: cancel") | dim);
 
         return vbox(std::move(dialog_rows)) | border | size(WIDTH, LESS_THAN, 80);
     }

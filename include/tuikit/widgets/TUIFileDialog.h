@@ -16,11 +16,15 @@ enum class FileDialogMode {
 
 /// Full-screen modal file/folder picker built on TUIApp::show_modal.
 ///
-/// Keyboard: Up/Down navigate, Enter opens a directory or accepts the
-/// selection, Backspace goes to the parent directory, Tab switches between
+/// Keyboard: Up/Down navigate, Enter accepts the selection (in directory
+/// mode it selects the highlighted directory), Right opens the highlighted
+/// directory, Backspace goes to the parent directory, Tab switches between
 /// the list and the path text field, `h` toggles hidden files, Escape cancels.
 /// Mouse: click to select, click the selected row again to activate,
 /// OK/Cancel buttons, mouse wheel scrolling.
+///
+/// A leading "~" in the start directory or the typed path is expanded to the
+/// home directory. The reported path is absolute and lexically normalized.
 ///
 /// The callback receives the chosen path, or an empty string if cancelled.
 class TUIFileDialog {

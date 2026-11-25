@@ -58,6 +58,8 @@ private:
     std::string status_text_;
 
     ftxui::Component modal_;
+    ftxui::Component modal_container_; // Holds the currently shown modal; always in the tree.
+    ftxui::Component modal_layer_;     // Maybe(modal_container_, &show_modal_).
     bool show_modal_ = false;
 
     std::unique_ptr<TUIKLoader> ui_loader_;
