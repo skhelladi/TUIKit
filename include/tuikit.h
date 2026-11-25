@@ -12,6 +12,7 @@
 #include "tuikit/widgets/TUITextField.h"
 #include "tuikit/widgets/TUILabel.h"
 #include "tuikit/widgets/TUIMenu.h"
+#include "tuikit/widgets/TUIMenuBar.h"
 #include "tuikit/widgets/TUICheckBox.h"
 #include "tuikit/widgets/TUIRadioBox.h"
 #include "tuikit/widgets/TUIComboBox.h"
@@ -59,6 +60,7 @@ namespace TUIKIT {
     using Label = std::shared_ptr<TUILabel>;
     using ListView = std::shared_ptr<TUIListView>;
     using Menu = std::shared_ptr<TUIMenu>;
+    using MenuBar = std::shared_ptr<TUIMenuBar>;
     using ProgressBar = std::shared_ptr<TUIProgressBar>;
     using RadioBox = std::shared_ptr<TUIRadioBox>;
     using ResizableSplit = std::shared_ptr<TUIResizableSplit>;
@@ -119,6 +121,10 @@ namespace TUIKIT {
 
     inline Menu menu(const std::vector<std::string>& options) {
         return std::make_shared<TUIMenu>(options);
+    }
+
+    inline MenuBar menubar() {
+        return std::make_shared<TUIMenuBar>();
     }
 
     inline ProgressBar progressbar(float initial_value = 0.0f, const std::string& label = "") {

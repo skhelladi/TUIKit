@@ -317,8 +317,28 @@ int main() {
     tab_widget->addTab("Advanced Widgets", advanced_widgets_content, ICON::Tasks);
     tab_widget->addTab("Vertical Tabs", vertical_tab_widget, ICON::Tasks);
 
+    // --- Menu Bar ---
+    auto menu_bar = menubar();
+    menu_bar->addMenu("File", {
+        {"New", [&app] { Notification::show(app, "File > New", "Info"); }, ICON::NewFile, false, true, "Ctrl+N"},
+        {"Open...", [&app] { Notification::show(app, "File > Open", "Info"); }, ICON::Open, false, true, "Ctrl+O"},
+        {"Save", [&app] { Notification::show(app, "File > Save", "Info"); }, ICON::Save, false, true, "Ctrl+S"},
+        {"", {}, "", true, true, ""},
+        {"Quit", [&app] { app.exit(); }, ICON::Quit, false, true, "Ctrl+Q"},
+    });
+    menu_bar->addMenu("Edit", {
+        {"Copy", [&app] { Notification::show(app, "Edit > Copy", "Info"); }, "", false, true, "Ctrl+C"},
+        {"Paste", [&app] { Notification::show(app, "Edit > Paste", "Info"); }, "", false, true, "Ctrl+V"},
+        {"Disabled Action", [&app] { Notification::show(app, "Never shown", "Info"); }, "", false, false, ""},
+    });
+    menu_bar->addMenu("View", {
+        {"Refresh", [&app] { app.request_redraw(); }, ICON::Collapsible, false, true, "F5"},
+        {"Exit", [&app] { app.exit(); }, ICON::Quit, false, true, ""},
+    });
+
     // --- Main Layout ---
     auto main_layout = vbox();
+    main_layout->addWidget(menu_bar);
     main_layout->addWidget(tab_widget);
 
     app.setMainWidget(main_layout);
