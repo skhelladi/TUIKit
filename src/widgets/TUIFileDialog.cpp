@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <filesystem>
 #include <ftxui/component/component.hpp>
+#include <ftxui/component/component_options.hpp>
 #include <ftxui/component/event.hpp>
-#include <ftxui/component/mouse.hpp>
 #include <ftxui/dom/elements.hpp>
 
 namespace TUIKIT {
@@ -35,7 +35,7 @@ std::string expandTilde(const std::string& path) {
     return path;
 }
 
-/// Minimal wildcard match supporting '*' only (e.g. "*.json").
+/// Minimal wildcard match supporting '*' and '?' (e.g. "*.json").
 bool wildcardMatch(const std::string& name, const std::string& pattern) {
     const std::string n = toLower(name);
     const std::string p = toLower(pattern);
@@ -57,13 +57,13 @@ bool wildcardMatch(const std::string& name, const std::string& pattern) {
     return j == p.size();
 }
 
-struct Entry {
-    std::string name;
-    bool is_dir = false;
-};
+} // namespace
 
-/// Internal state + component of an open dialog.
-class FileDialogImpl : public std::enable_shared_from_this<FileDialogImpl> {
+// -----------------------------------------------------------------------------
+// FileDialogImpl
+// -----------------------------------------------------------------------------
+
+class TUIFileDialog::FileDialogImpl : public std::enable_shared_from_this<FileDialogImpl> {
 public:
     FileDialogImpl(TUIApp* app, std::string start_dir, std::vector<std::string> filters,
                    FileDialogMode mode, TUIFileDialog::Callback callback)
@@ -88,19 +88,44 @@ public:
         app_->show_modal(component_);
     }
 
+    std::string selectedEntry() const {
+        if (selected_ < 0 || selected_ >= static_cast<int>(entries_.size())) {
+            return "";
+        }
+        return entryPath(selected_).string();
+    }
+
 private:
+    struct Entry {
+        std::string name;
+        bool is_dir = false;
+    };
+
+    // --- construction -------------------------------------------------------
+
     void build() {
-        input_ = Input(&path_input_, "");
+        InputOption input_option;
+        input_option.multiline = false;
+        input_ = Input(&path_input_, "", input_option);
         ok_button_ = Button("OK", [self = shared_from_this()] { self->accept(); });
         cancel_button_ = Button("Cancel", [self = shared_from_this()] { self->cancel(); });
         buttons_ = Container::Horizontal({ok_button_, cancel_button_});
-        container_ = Container::Vertical({input_, buttons_});
+
+        MenuOption menu_option;
+        menu_option.on_change = [self = shared_from_this()] { self->updatePathFromSelection(); };
+        menu_option.on_enter = [self = shared_from_this()] { self->activateEntry(); };
+        menu_ = Menu(&labels_, &selected_, menu_option);
+
+        container_ = Container::Vertical({menu_, input_, buttons_});
+        container_->SetActiveChild(menu_.get());
 
         component_ = Renderer(container_, [self = shared_from_this()] { return self->render(); });
         component_ = CatchEvent(component_, [self = shared_from_this()](Event event) {
             return self->handleEvent(event);
         });
     }
+
+    // --- directory listing ----------------------------------------------------
 
     bool matchesFilters(const std::string& name) const {
         if (filters_.empty()) return true;
@@ -112,6 +137,7 @@ private:
 
     void refresh() {
         entries_.clear();
+        labels_.clear();
         std::error_code ec;
         const bool has_parent = current_dir_.parent_path() != current_dir_;
         if (has_parent) {
@@ -132,15 +158,35 @@ private:
             }
             entries_.push_back({name, is_dir});
         }
-        std::sort(entries_.begin(), entries_.end(), [](const Entry& a, const Entry& b) {
-            if (a.is_dir != b.is_dir) return a.is_dir; // directories first
-            return toLower(a.name) < toLower(b.name);
-        });
-        selected_ = entries_.empty() ? -1 : 0;
-        first_visible_ = 0;
+        std::sort(entries_.begin() + (has_parent ? 1 : 0), entries_.end(),
+                  [](const Entry& a, const Entry& b) {
+                      if (a.is_dir != b.is_dir) return a.is_dir; // directories first
+                      return toLower(a.name) < toLower(b.name);
+                  });
+
+        // Selectable display labels: "📁 name/" for directories, "📄 name" for files.
+        for (const auto& entry : entries_) {
+            if (entry.is_dir) {
+                labels_.push_back(ICON::Open + " " + entry.name + "/");
+            } else {
+                labels_.push_back(ICON::NewFile + " " + entry.name);
+            }
+        }
+
+        selected_ = 0;
         error_.clear();
         path_input_ = current_dir_.string() + "/";
     }
+
+    fs::path entryPath(int index) const {
+        const Entry& entry = entries_[index];
+        if (entry.name == "..") {
+            return current_dir_.parent_path();
+        }
+        return current_dir_ / entry.name;
+    }
+
+    // --- navigation and selection ---------------------------------------------
 
     void goUp() {
         const fs::path parent = current_dir_.parent_path();
@@ -149,21 +195,11 @@ private:
         refresh();
     }
 
-    void moveSelection(int delta) {
-        if (entries_.empty()) return;
-        selected_ = std::clamp(selected_ + delta, 0, static_cast<int>(entries_.size()) - 1);
-        updatePathFromSelection();
-        error_.clear();
-    }
-
     void updatePathFromSelection() {
         if (input_focused_ || selected_ < 0 || selected_ >= static_cast<int>(entries_.size())) {
             return;
         }
-        const Entry& entry = entries_[selected_];
-        if (entry.name != ".." && !entry.is_dir) {
-            path_input_ = (current_dir_ / entry.name).string();
-        }
+        path_input_ = entryPath(selected_).string();
     }
 
     void activateEntry() {
@@ -184,7 +220,7 @@ private:
     }
 
     /// In SelectDirectory mode Enter selects the highlighted directory;
-    /// otherwise (and via the dedicated EnterDirectory key) it navigates in.
+    /// otherwise (and via the dedicated Right key) it navigates into it.
     void enterSelectedDirectory() {
         if (selected_ < 0 || selected_ >= static_cast<int>(entries_.size())) {
             return;
@@ -197,6 +233,8 @@ private:
         current_dir_ /= entry.name;
         refresh();
     }
+
+    // --- validation -------------------------------------------------------------
 
     void finish(const fs::path& path) {
         if (callback_) {
@@ -254,53 +292,40 @@ private:
         app_->close_modal();
     }
 
+    // --- events -------------------------------------------------------------------
+
     bool handleEvent(Event event) {
+        // Mouse events: the menu, the input and the buttons handle their own
+        // clicks and wheel scrolling.
         if (event.is_mouse()) {
-            return handleMouse(event);
+            return false;
         }
-        if (event == Event::Escape) {
-            cancel();
-            return true;
-        }
-        if (event == Event::Tab || event == Event::TabReverse) {
-            setInputFocused(!input_focused_);
-            return true;
-        }
+
         if (input_focused_) {
             if (event == Event::Return) {
                 accept();
                 return true;
             }
+            if (event == Event::Escape) {
+                cancel();
+                return true;
+            }
+            if (event == Event::Tab || event == Event::TabReverse) {
+                setInputFocused(false);
+                return true;
+            }
             return input_->OnEvent(event);
         }
-        if (event == Event::ArrowUp) {
-            moveSelection(-1);
+
+        // List navigation mode. Input is not focus-gated in this FTXUI version
+        // and Container dispatches to every child, so unhandled keys must be
+        // swallowed here to keep the path field clean.
+        if (event == Event::Escape) {
+            cancel();
             return true;
         }
-        if (event == Event::ArrowDown) {
-            moveSelection(1);
-            return true;
-        }
-        if (event == Event::PageUp) {
-            moveSelection(-std::max(1, list_height_));
-            return true;
-        }
-        if (event == Event::PageDown) {
-            moveSelection(std::max(1, list_height_));
-            return true;
-        }
-        if (event == Event::Home) {
-            if (!entries_.empty()) {
-                selected_ = 0;
-                updatePathFromSelection();
-            }
-            return true;
-        }
-        if (event == Event::End) {
-            if (!entries_.empty()) {
-                selected_ = static_cast<int>(entries_.size()) - 1;
-                updatePathFromSelection();
-            }
+        if (event == Event::Tab || event == Event::TabReverse) {
+            setInputFocused(true);
             return true;
         }
         if (event == Event::Backspace) {
@@ -322,40 +347,19 @@ private:
             refresh();
             return true;
         }
-        return false;
-    }
-
-    bool handleMouse(Event event) {
-        const auto& mouse = event.mouse();
-        if (list_box_.Contain(mouse.x, mouse.y)) {
-            if (mouse.button == Mouse::WheelUp) {
-                moveSelection(-3);
-                return true;
-            }
-            if (mouse.button == Mouse::WheelDown) {
-                moveSelection(3);
-                return true;
-            }
-            if (mouse.button == Mouse::Left && !mouse.motion) {
-                const int row = first_visible_ + (mouse.y - list_box_.y_min);
-                if (row >= 0 && row < static_cast<int>(entries_.size())) {
-                    if (row == selected_) {
-                        activateEntry(); // second click on the selected row
-                    } else {
-                        selected_ = row;
-                        updatePathFromSelection();
-                    }
-                    return true;
-                }
-            }
+        if (event.is_character()) {
+            return true; // Swallow stray typing (do not leak into the path input).
         }
-        return false; // Let the OK/Cancel buttons and the input handle their own clicks.
+        // ArrowUp/Down, PageUp/Down, Home/End fall through to the menu list.
+        return false;
     }
 
     void setInputFocused(bool focused) {
         input_focused_ = focused;
-        container_->SetActiveChild(focused ? input_.get() : buttons_.get());
+        container_->SetActiveChild(focused ? input_.get() : menu_.get());
     }
+
+    // --- rendering -----------------------------------------------------------------
 
     Element render() {
         auto& theme = TUIStyle::instance().currentTheme();
@@ -369,39 +373,18 @@ private:
             filters_text += f;
         }
 
-        // Keep the selected row inside the visible window. The box is only
-        // trusted after the first real layout pass (degenerate otherwise).
-        if (list_box_.y_max >= list_box_.y_min) {
-            list_height_ = std::max(1, list_box_.y_max - list_box_.y_min + 1);
+        Element list_element;
+        if (labels_.empty()) {
+            list_element = text("(empty directory)") | dim;
+        } else {
+            list_element = menu_->Render() | flex;
         }
-        const int total = static_cast<int>(entries_.size());
-        if (selected_ < first_visible_) first_visible_ = selected_;
-        if (selected_ >= first_visible_ + list_height_) first_visible_ = selected_ - list_height_ + 1;
-        first_visible_ = std::max(0, first_visible_);
-
-        Elements list_rows;
-        if (total == 0) {
-            list_rows.push_back(text("(empty directory)") | dim);
-        }
-        const int last = std::min(total, first_visible_ + list_height_);
-        for (int i = first_visible_; i < last; ++i) {
-            const Entry& entry = entries_[i];
-            std::string label = entry.is_dir ? (entry.name == ".." ? ".." : ICON::Open + " " + entry.name + "/")
-                                             : ICON::NewFile + " " + entry.name;
-            Element row = text(label);
-            if (i == selected_) {
-                row |= inverted;
-            }
-            list_rows.push_back(std::move(row));
-        }
-
-        auto list = vbox(std::move(list_rows)) | reflect(list_box_) | flex;
 
         Elements dialog_rows = {
             text(title) | bold | color(theme.primary) | center,
             separator(),
             text(current_dir_.string()) | color(theme.secondary),
-            list,
+            list_element,
             separator(),
             hbox({text("Path: "), input_->Render() | flex}),
         };
@@ -425,31 +408,51 @@ private:
 
     fs::path current_dir_;
     std::vector<Entry> entries_;
-    int selected_ = -1;
-    int first_visible_ = 0;
+    std::vector<std::string> labels_; // Selectable display labels, parallel to entries_.
+    int selected_ = 0;
     bool show_hidden_ = false;
     bool input_focused_ = false;
     std::string path_input_;
     std::string error_;
 
+    ftxui::Component menu_;
     ftxui::Component input_;
     ftxui::Component ok_button_;
     ftxui::Component cancel_button_;
     ftxui::Component buttons_;
     ftxui::Component container_;
     ftxui::Component component_;
-    ftxui::Box list_box_;
-    int list_height_ = 12;
 };
 
-} // namespace
+// -----------------------------------------------------------------------------
+// TUIFileDialog public API
+// -----------------------------------------------------------------------------
+
+TUIFileDialog::TUIFileDialog(TUIApp& app, const std::string& start_dir,
+                             const std::vector<std::string>& filters,
+                             FileDialogMode mode)
+    : impl_(std::make_shared<FileDialogImpl>(&app, start_dir, filters, mode, nullptr)) {
+    impl_->init();
+}
+
+TUIFileDialog::~TUIFileDialog() = default;
+
+void TUIFileDialog::open() {
+    impl_->open();
+}
+
+std::string TUIFileDialog::selectedEntry() const {
+    return impl_->selectedEntry();
+}
 
 void TUIFileDialog::pickFile(TUIApp& app, const std::string& start_dir,
                              const std::vector<std::string>& filters,
                              FileDialogMode mode, Callback callback) {
-    auto dialog = std::make_shared<FileDialogImpl>(&app, start_dir, filters, mode, std::move(callback));
-    dialog->init();
-    dialog->open();
+    auto impl = std::make_shared<FileDialogImpl>(&app, start_dir, filters, mode, std::move(callback));
+    impl->init();
+    impl->open();
+    // Lifetime: the modal component's handlers capture shared_from_this(), so
+    // TUIApp keeps the impl alive until close_modal() drops the component.
 }
 
 } // namespace TUIKIT
