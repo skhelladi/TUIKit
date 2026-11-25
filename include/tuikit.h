@@ -32,6 +32,7 @@
 #include "tuikit/widgets/TUISpinBox.h"
 #include "tuikit/widgets/TUITableView.h"
 #include "tuikit/widgets/TUIListView.h"
+#include "tuikit/widgets/TUILogConsole.h"
 #include "tuikit/plotting/TUIPlot.h"
 #include "tuikit/io/TUICSVTailReader.h"
 #include "tuikit/core/TUIConnect.h"
@@ -59,6 +60,7 @@ namespace TUIKIT {
     using GroupBox = std::shared_ptr<TUIGroupBox>;
     using Label = std::shared_ptr<TUILabel>;
     using ListView = std::shared_ptr<TUIListView>;
+    using LogConsole = std::shared_ptr<TUILogConsole>;
     using Menu = std::shared_ptr<TUIMenu>;
     using MenuBar = std::shared_ptr<TUIMenuBar>;
     using ProgressBar = std::shared_ptr<TUIProgressBar>;
@@ -117,6 +119,10 @@ namespace TUIKIT {
 
     inline ListView listview(const std::vector<std::string>& items) {
         return std::make_shared<TUIListView>(items);
+    }
+
+    inline LogConsole logconsole(std::size_t capacity = 10000) {
+        return std::make_shared<TUILogConsole>(capacity);
     }
 
     inline Menu menu(const std::vector<std::string>& options) {

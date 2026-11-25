@@ -86,6 +86,7 @@ set(TUIKIT_HEADERS
     include/tuikit/widgets/TUISpinBox.h
     include/tuikit/widgets/TUIDoubleSpinBox.h
     include/tuikit/widgets/TUIListView.h
+    include/tuikit/widgets/TUILogConsole.h
     include/tuikit/widgets/TUITableView.h
     include/tuikit/plotting/TUIPlot.h
     include/tuikit/plotting/TUIPlotAxis.h
@@ -128,6 +129,7 @@ set(TUIKIT_SOURCES
     src/widgets/TUISpinBox.cpp
     src/widgets/TUIDoubleSpinBox.cpp
     src/widgets/TUIListView.cpp
+    src/widgets/TUILogConsole.cpp
     src/widgets/TUITableView.cpp
     src/plotting/TUIPlot.cpp
     src/plotting/TUIPlotAxis.cpp

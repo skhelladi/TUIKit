@@ -294,6 +294,36 @@ int main() {
     table_view_group->addWidget(table_view_label);
     right_advanced_group->addWidget(groupbox("Table View", table_view_group));
 
+    // TUILogConsole Example
+    auto log_console_group = vbox();
+    auto log_console = logconsole(10000);
+    auto log_generator_button = button("Append 1000 log lines");
+    connect(log_generator_button, [log_console] {
+        for (int i = 0; i < 1000; ++i) {
+            log_console->append("Log line " + std::to_string(i) + ": solver iteration done");
+        }
+    });
+    auto log_warning_button = button("Warning");
+    connect(log_warning_button, [log_console] {
+        log_console->append("WARNING: divergence detected", ftxui::Color::Yellow);
+    });
+    auto log_error_button = button("Error");
+    connect(log_error_button, [log_console] {
+        log_console->append("ERROR: simulation failed", ftxui::Color::Red);
+    });
+    auto log_filter_input = textfield("Filter (substring)...");
+    connect(log_filter_input, [log_console](const std::string& filter_text) {
+        log_console->setFilter(filter_text);
+    });
+    auto log_buttons_row = hbox();
+    log_buttons_row->addWidget(log_generator_button);
+    log_buttons_row->addWidget(log_warning_button);
+    log_buttons_row->addWidget(log_error_button);
+    log_console_group->addWidget(log_buttons_row);
+    log_console_group->addWidget(log_filter_input);
+    log_console_group->addWidget(log_console);
+    right_advanced_group->addWidget(groupbox("Log Console", log_console_group));
+
     advanced_widgets_content->addWidget(left_advanced_group);
     advanced_widgets_content->addWidget(right_advanced_group);
 
