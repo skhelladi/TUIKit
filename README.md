@@ -29,16 +29,19 @@ The following core components are implemented and functional:
 
 *   `TUIApp`: The entry point for the application.
 *   `TUIWidget`: Base class for all UI components.
-*   `TUIButton`: Interactive button with click events and icon support.
+*   `TUIButton`: Interactive button with click events, icon and enable/disable support.
 *   `TUICheckBox`: Simple toggle checkbox.
 *   `TUICollapsible`: A collapsible container for widgets.
 *   `TUIComboBox`: Dropdown list for selection.
 *   `TUIDoubleSpinBox`: Spin box for double-precision floating-point values.
-*   `TUIForm`: Organizes input fields with labels.
+*   `TUIFileDialog`: Modal full-screen file/folder picker (open/save/directory modes, extension filters, hidden-files toggle).
+*   `TUIForm`: Organizes input fields with labels (dynamic add/remove/rebuild supported).
 *   `TUIGroupBox`: Groups related widgets with an optional title and border.
 *   `TUILabel`: Displays static text.
 *   `TUIListView`: A simple list of selectable string items.
+*   `TUILogConsole`: High-performance scrolling log console (bounded ring buffer, follow-tail, per-line colors, filter, virtual rendering).
 *   `TUIMenu`: Vertical list of selectable options.
+*   `TUIMenuBar`: Horizontal menu bar with keyboard-navigable dropdown menus, icons, separators and shortcuts.
 *   `TUIProgressBar`: A widget to show progress.
 *   `TUIRadioBox`: Group of exclusive radio buttons.
 *   `TUIResizableSplit`: Splitter for resizable panels (horizontal/vertical).
@@ -53,6 +56,21 @@ The following core components are implemented and functional:
 *   `TUIToolbar`: A bar for action buttons.
 *   `TUITreeView`: Displays hierarchical data in a tree structure.
 *   `TUIPlot`: Plots several curves (live or streamed from a CSV file) with fixed/auto ranges, major/minor grid, legend, crosshair, zoom and pan.
+
+## 🎨 Icon Catalog (`TUIKIT::ICON`)
+
+All glyphs are `const std::string` in `include/tuikit/core/TUIIcons.h`, ready to
+be passed to `button()->setIcon(...)`, toolbar items, tree nodes, etc.
+
+| Category | Icons |
+|---|---|
+| General / application | `Rocket` 🚀, `Home` 🏠, `Settings` ⚙️, `Search` 🔍, `Clock` 🕐, `Link` 🔗, `Lock` 🔒, `Unlock` 🔓, `User` 👤, `Terminal` 🖥️, `Book` 📖, `Help` ❓ |
+| Files and edition | `NewFile` 📄, `File` 📃, `Folder` 📁, `Open` 📂, `Save` 💾, `SaveAs` 💽, `Edit` ✏️, `Delete` 🗑️, `Copy` 📋, `Paste` 📌, `Import` 📥, `Export` 📤 |
+| Execution controls | `Play` ▶️, `Stop` ⏹️, `Pause` ⏸️, `Refresh` 🔄, `Calculate` 🧮, `Solver` 🌀 |
+| Status / severity | `Tasks` ✅, `Quit` ❌, `Close` ✖️, `Info` ℹ️, `Warning` ⚠️, `Error` ❗, `Success` ✔️ |
+| Navigation | `Collapsible` ↕️, `ArrowUp` ⬆️, `ArrowDown` ⬇️, `ArrowLeft` ⬅️, `ArrowRight` ➡️, `ChevronUp` ▲, `ChevronDown` ▼, `ChevronLeft` ◀, `ChevronRight` ▶, `Back` ↩️, `Forward` ↪️, `Plus` ➕, `Minus` ➖ |
+| Project / engineering | `ProjectTree` 🌳, `Themes` 🎨, `Chart` 📊, `Domain` 🌐, `Mesh` 🕸️, `Boundary` 🧱 |
+
 
 ## 🛠️ Getting Started
 
