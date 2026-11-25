@@ -15,6 +15,7 @@ public:
     void onEnter(OnEnterCallback cb);
 
     std::string text() const;
+    void setText(const std::string& text);
     void setReadOnly(bool read_only);
     bool isReadOnly() const;
 

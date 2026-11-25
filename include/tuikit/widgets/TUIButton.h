@@ -18,12 +18,17 @@ public:
     void onClick(OnClickedCallback callback); // Setter for the click callback
     void setIcon(const std::string& icon);
     void setText(const std::string& text); // New method to set button text
+    void setEnabled(bool enabled);
+    bool isEnabled() const;
     const std::string& icon() const;
 
 private:
+    void rebuildComponent();
+
     std::string original_text_; // This will hold the text provided by the user, without the icon
     std::string text_; // This will hold the text displayed by the FTXUI button (icon + original_text_)
     std::string icon_;
+    bool enabled_ = true;
     OnClickedCallback on_clicked_;
 };
 

@@ -16,6 +16,13 @@ void TUITreeView::onSelect(OnSelectCallback cb) {
     on_select_ = std::move(cb);
 }
 
+void TUITreeView::setTree(TreeNode root_node) {
+    root_node_ = std::move(root_node);
+    buildComponent(root_node_, 0);
+    component_ = root_node_.component;
+    requestRedraw();
+}
+
 void TUITreeView::buildComponent(TreeNode& node, int depth) {
     using namespace ftxui;
 

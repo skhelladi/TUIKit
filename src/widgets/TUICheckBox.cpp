@@ -22,4 +22,9 @@ bool TUICheckBox::checked() const {
     return checked_;
 }
 
+void TUICheckBox::setChecked(bool checked) {
+    checked_ = checked;
+    requestRedraw();
+}
+
 } // namespace TUIKIT

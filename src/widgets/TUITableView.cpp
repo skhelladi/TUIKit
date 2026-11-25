@@ -162,4 +162,18 @@ namespace TUIKIT
         return read_only_;
     }
 
+    void TUITableView::setRows(const std::vector<std::vector<std::string>>& rows)
+    {
+        data_ = rows;
+        if (selected_row_ >= (int)data_.size()) selected_row_ = std::max(0, (int)data_.size() - 1);
+        if (!headers_.empty() && selected_col_ >= (int)headers_.size()) selected_col_ = (int)headers_.size() - 1;
+        is_editing_ = false;
+        requestRedraw();
+    }
+
+    void TUITableView::clearRows()
+    {
+        setRows({});
+    }
+
 }

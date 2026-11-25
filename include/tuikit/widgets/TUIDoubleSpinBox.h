@@ -19,6 +19,7 @@ public:
 
     double value() const;
     void setValue(double value);
+    void setRange(double min, double max);
 
     void setReadOnly(bool read_only);
     bool isReadOnly() const;

@@ -22,6 +22,7 @@ namespace TUIKIT
 
         int value() const;
         void setValue(int value);
+        void setRange(int min, int max);
 
         void setReadOnly(bool read_only);
         bool isReadOnly() const;

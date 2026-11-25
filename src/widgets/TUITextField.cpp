@@ -22,6 +22,11 @@ std::string TUITextField::text() const {
     return value_;
 }
 
+void TUITextField::setText(const std::string& text) {
+    value_ = text;
+    requestRedraw();
+}
+
 void TUITextField::setReadOnly(bool read_only) {
     read_only_ = read_only;
     if (read_only_) {

@@ -95,7 +95,17 @@ namespace TUIKIT
         if (value >= min_ && value <= max_)
         {
             value_ = value;
+            value_str_ = std::to_string(value_);
+            requestRedraw();
         }
+    }
+
+    void TUISpinBox::setRange(int min, int max)
+    {
+        min_ = min;
+        max_ = max;
+        if (value_ < min_) setValue(min);
+        else if (value_ > max_) setValue(max);
     }
 
     void TUISpinBox::setReadOnly(bool read_only)

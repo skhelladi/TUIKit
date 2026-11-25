@@ -85,13 +85,42 @@ int main()
         // For simplicity, let's assume a fixed path for now or prompt user
         std::string case_dir = "./my_openfoam_case"; // Example path
         if (params.readOpenFoamFiles(case_dir)) {
-            // TUIKIT widgets do not currently support direct setting of values after creation.
-            // To fully update the UI, one would typically need to recreate the widgets
-            // or modify TUIKIT to expose setter methods (e.g., setText, setSelected, setChecked).
-            // For now, we will just update the status label.
+            // Push the loaded parameters into the already-created widgets.
+            auto index_of = [](const std::vector<std::string>& options, const std::string& value) {
+                for (size_t i = 0; i < options.size(); ++i) {
+                    if (options[i] == value) return (int)i;
+                }
+                return 0;
+            };
 
-            log_output_label->setText("Status: Loaded case " + params.caseName + ". UI elements not updated due to TUIKIT limitations.");
-            Notification::show(app, "Case loaded successfully! (UI not fully updated)", "Success", 2000);
+            case_name_input->setText(params.caseName);
+            mesh_path_input->setText(params.meshPath);
+            solver_type_combobox->setSelected(index_of(solver_types, params.solverType));
+            flow_type_radiobox->setSelectedIndex(index_of(flow_types, params.flowType));
+            thermo_model_combobox->setSelected(index_of(thermo_models, params.thermoModel));
+            flow_regime_radiobox->setSelectedIndex(index_of(flow_regimes, params.flowRegime));
+            turbulence_model_combobox->setSelected(index_of(turbulence_models, params.turbulenceModel));
+
+            U_x_input->setValue(params.U_x);
+            U_y_input->setValue(params.U_y);
+            U_z_input->setValue(params.U_z);
+            p_init_input->setValue(params.p_init);
+            T_init_input->setValue(params.T_init);
+            nu_value_input->setValue(params.nu_value);
+            k_init_input->setValue(params.k_init);
+            epsilon_init_input->setValue(params.epsilon_init);
+            omega_init_input->setValue(params.omega_init);
+            start_time_input->setValue(params.startTime);
+            end_time_input->setValue(params.endTime);
+            delta_t_input->setValue(params.deltaT);
+            write_interval_input->setValue(params.writeInterval);
+
+            generate_paraview_checkbox->setChecked(params.generateParaview);
+            run_foamToVTK_checkbox->setChecked(params.runFoamToVTK);
+            custom_post_script_path->setText(params.customPostScriptPath);
+
+            log_output_label->setText("Status: Loaded case " + params.caseName + ".");
+            Notification::show(app, "Case loaded successfully!", "Success", 2000);
         } else {
             log_output_label->setText("Status: Failed to load case from " + case_dir);
             Notification::show(app, "Failed to load case!", "Error", 2000);

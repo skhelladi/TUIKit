@@ -13,6 +13,7 @@ TUILabel::TUILabel(const std::string& text, TUIWidget* /*parent*/)
 
 void TUILabel::setText(const std::string& text) {
     text_ = text;
+    requestRedraw();
 }
 
 std::string TUILabel::text() const {

@@ -29,6 +29,9 @@ public:
 
     void onSelect(OnSelectCallback cb);
 
+    // Replace the whole tree content and rebuild the underlying component.
+    void setTree(TreeNode root_node);
+
 private:
     void buildComponent(TreeNode& node, int depth);
     ftxui::Element renderNode(const TreeNode& node, int depth);

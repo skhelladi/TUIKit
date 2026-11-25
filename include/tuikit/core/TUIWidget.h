@@ -13,6 +13,10 @@ public:
     ftxui::Component get_ftxui_component() const { return component_; }
 
 protected:
+    // Ask the running application to redraw. Safe to call from any thread
+    // (used by setters that change widget state outside the event loop).
+    void requestRedraw();
+
     ftxui::Component component_;
 };
 

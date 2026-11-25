@@ -22,6 +22,11 @@ public:
     void setReadOnly(bool read_only);
     bool isReadOnly() const;
 
+    // Replace the data rows (headers unchanged) and refresh the display.
+    void setRows(const std::vector<std::vector<std::string>>& rows);
+    // Remove all data rows and refresh the display.
+    void clearRows();
+
 private:
     std::vector<std::string> headers_;
     std::vector<std::vector<std::string>> data_;

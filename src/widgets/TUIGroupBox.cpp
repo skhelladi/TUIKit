@@ -44,6 +44,7 @@ TUIGroupBox::TUIGroupBox(const std::string& title, std::shared_ptr<TUIWidget> co
 
 void TUIGroupBox::setTitle(const std::string& title) {
     title_ = title;
+    requestRedraw();
 }
 
 void TUIGroupBox::setContentWidget(std::shared_ptr<TUIWidget> content_widget) {

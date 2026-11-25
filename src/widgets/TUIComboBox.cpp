@@ -45,6 +45,10 @@ void TUIComboBox::setSelectedIndex(int index) {
     }
 }
 
+void TUIComboBox::setSelected(int index) {
+    setSelectedIndex(index);
+}
+
 void TUIComboBox::update_ftxui_dropdown_component() {
     component_ = ftxui::Dropdown(&options_, &selected_index_);
     component_ = ftxui::Renderer(component_, [this] {

@@ -14,6 +14,7 @@ public:
     int selectedIndex() const;
     std::string selectedText() const;
     void setSelectedIndex(int index);
+    void setSelected(int index); // Alias of setSelectedIndex()
 private:
     std::vector<std::string> options_;
     int selected_index_ = 0;
