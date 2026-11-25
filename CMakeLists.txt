@@ -72,6 +72,7 @@ set(TUIKIT_HEADERS
     include/tuikit/widgets/TUILabel.h
     include/tuikit/widgets/TUIMenu.h
     include/tuikit/widgets/TUIMenuBar.h
+    include/tuikit/widgets/TUIFileDialog.h
     include/tuikit/widgets/TUICheckBox.h
     include/tuikit/widgets/TUIRadioBox.h
     include/tuikit/widgets/TUIComboBox.h
@@ -107,6 +108,7 @@ set(TUIKIT_SOURCES
     src/widgets/TUILabel.cpp
     src/widgets/TUIMenu.cpp
     src/widgets/TUIMenuBar.cpp
+    src/widgets/TUIFileDialog.cpp
     src/widgets/TUICheckBox.cpp
     src/widgets/TUIRadioBox.cpp
     src/widgets/TUIComboBox.cpp

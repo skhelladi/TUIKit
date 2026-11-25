@@ -29,6 +29,7 @@
 #include "tuikit/widgets/TUIProgressBar.h"
 #include "tuikit/widgets/TUIScrollableContainer.h"
 #include "tuikit/widgets/TUIDoubleSpinBox.h"
+#include "tuikit/widgets/TUIFileDialog.h"
 #include "tuikit/widgets/TUISpinBox.h"
 #include "tuikit/widgets/TUITableView.h"
 #include "tuikit/widgets/TUIListView.h"

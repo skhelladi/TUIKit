@@ -324,6 +324,21 @@ int main() {
     log_console_group->addWidget(log_console);
     right_advanced_group->addWidget(groupbox("Log Console", log_console_group));
 
+    // TUIFileDialog Example
+    auto file_dialog_label = label("Picked file: (none)");
+    auto pick_file_button = button("Open File...");
+    connect(pick_file_button, [&app, file_dialog_label] {
+        TUIFileDialog::pickFile(app, ".", {"*.json", "*.txt", "*.cpp"},
+                                FileDialogMode::OpenFile,
+                                [file_dialog_label](const std::string& path) {
+                                    file_dialog_label->setText("Picked file: " + (path.empty() ? "(cancelled)" : path));
+                                });
+    });
+    auto file_dialog_group = vbox();
+    file_dialog_group->addWidget(pick_file_button);
+    file_dialog_group->addWidget(file_dialog_label);
+    toolbar_tab_content->addWidget(groupbox("File Dialog", file_dialog_group));
+
     advanced_widgets_content->addWidget(left_advanced_group);
     advanced_widgets_content->addWidget(right_advanced_group);
 
