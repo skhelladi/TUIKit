@@ -134,6 +134,9 @@ set(TUIKIT_SOURCES
     # Add other source files as they are created
 )
 
+option(TUIKIT_BUILD_EXAMPLES "Build the example executables" ON)
+
+if(TUIKIT_BUILD_EXAMPLES)
 set(EXAMPLE_SOURCES
     examples/example_1.cpp
 )
@@ -150,6 +153,7 @@ set(OPENFOAM_TUI_SOURCES
 set(FTXUI_TEST_SOURCES
     examples/ftxui_test.cpp
 )
+endif()
 
 # =============================================================================
 # TUI FRAMEWORK LIBRARY
@@ -167,6 +171,7 @@ target_link_libraries(tuikit PUBLIC ftxui::screen ftxui::dom ftxui::component)
 # EXAMPLE EXECUTABLE 1
 # =============================================================================
 
+if(TUIKIT_BUILD_EXAMPLES)
 add_executable(example_1 ${EXAMPLE_SOURCES})
 target_link_libraries(example_1 PRIVATE tuikit)
 
@@ -190,6 +195,7 @@ target_link_libraries(openfoam_tui PRIVATE tuikit)
 
 add_executable(example_plot examples/example_plot.cpp)
 target_link_libraries(example_plot PRIVATE tuikit)
+endif()
 
 
 
