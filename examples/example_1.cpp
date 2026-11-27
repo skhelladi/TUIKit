@@ -168,7 +168,12 @@ int main() {
     auto form_status_tab_content = vbox();
     auto form_widget = form();
     form_widget->addField("Name:", textfield("Your Name"));
-    form_widget->addField("Email:", textfield("Your Email"));
+    form_widget->addField("Email:", textfield("you@example.com"));
+    form_widget->addField("Age:", spinbox("years", 30, 0, 130, 1));
+    form_widget->addField("Height:", doublespinbox("meters", 1.75, 0.5, 2.5, 0.05));
+    form_widget->addField("Country:", combobox({"France", "Germany", "Italy", "Spain"}));
+    form_widget->addField("Newsletter:", checkbox("Subscribe"));
+    form_widget->addField("Biography:", textarea("A few words about you...", "", 3));
     form_status_tab_content->addWidget(groupbox("User Information", form_widget));
 
     auto status_bar = statusbar("Application Ready.");
