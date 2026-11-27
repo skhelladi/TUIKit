@@ -146,7 +146,10 @@ namespace TUIKIT {
         return std::make_shared<TUIResizableSplit>(first, second, orientation);
     }
 
-    inline ScrollableContainer scrollable_container(Widget content, int height) {
+    /// Scrollable container. height > 0: fixed viewport of that many rows.
+    /// height <= 0 (default): flexible — fills the height the parent layout
+    /// gives, scrolls the overflow with a visible scrollbar on the right.
+    inline ScrollableContainer scrollable_container(Widget content, int height = 0) {
         return std::make_shared<TUIScrollableContainer>(content, height);
     }
 
