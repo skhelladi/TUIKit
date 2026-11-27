@@ -37,5 +37,8 @@ private:
 
     std::vector<std::pair<std::string, std::shared_ptr<TUIWidget>>> fields_;
     std::vector<ftxui::Component> rows_;
+    /// Shared label column width: max label length, capped. Kept in sync by
+    /// addField()/rebuildRows()/clearFields() so every row aligns.
+    int label_column_width_ = 1;
 };
 } // namespace TUIKIT

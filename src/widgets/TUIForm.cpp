@@ -18,18 +18,12 @@ TUIForm::TUIForm(TUIWidget* /*parent*/)
 }
 
 ftxui::Component TUIForm::makeRow(const std::string& label, const std::shared_ptr<TUIWidget>& field) {
-    // All rows share the same label column width (the longest label in the
-    // form), so the fields line up like in a GUI form.
-    int label_width = 1;
-    for (const auto& entry : fields_) {
-        label_width = std::max(label_width, static_cast<int>(entry.first.size()));
-    }
-    label_width = std::min(label_width, kMaxLabelColumnWidth);
-
-    auto label_renderer = ftxui::Renderer([label, label_width] {
+    // All rows share the same label column width (TUIForm::label_column_width_),
+    // so the fields line up like in a GUI form.
+    auto label_renderer = ftxui::Renderer([label, width = label_column_width_] {
         auto& theme = TUIStyle::instance().currentTheme();
         return ftxui::text(label) | ftxui::color(theme.text) |
-               ftxui::size(ftxui::WIDTH, ftxui::EQUAL, label_width);
+               ftxui::size(ftxui::WIDTH, ftxui::EQUAL, width);
     });
     auto gutter = ftxui::Renderer([] {
         return ftxui::text(std::string(kLabelGap, ' '));
@@ -42,10 +36,10 @@ ftxui::Component TUIForm::makeRow(const std::string& label, const std::shared_pt
 }
 
 void TUIForm::addField(const std::string& label, std::shared_ptr<TUIWidget> field) {
+    const std::string focus_label = focusedLabel();
     fields_.push_back({label, field});
-    auto row = makeRow(label, field);
-    rows_.push_back(row);
-    component_->Add(row);
+    // Rebuild every row so all of them share the updated label column width.
+    rebuildRows(focus_label);
 }
 
 void TUIForm::removeField(const std::string& label) {
@@ -63,6 +57,7 @@ void TUIForm::clearFields() {
     fields_.clear();
     component_->DetachAllChildren();
     rows_.clear();
+    label_column_width_ = 1;
     requestRedraw();
 }
 
@@ -94,6 +89,10 @@ std::string TUIForm::focusedLabel() const {
 }
 
 void TUIForm::rebuildRows(const std::string& focus_label) {
+    label_column_width_ = 1;
+    for (const auto& entry : fields_) {
+        label_column_width_ = std::min(kMaxLabelColumnWidth, std::max(label_column_width_, static_cast<int>(entry.first.size())));
+    }
     component_->DetachAllChildren();
     rows_.clear();
     for (const auto& entry : fields_) {
