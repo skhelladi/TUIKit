@@ -1,20 +1,42 @@
 #include "tuikit/widgets/TUIForm.h"
 #include "tuikit/core/TUIStyle.h"
+#include <algorithm>
 #include <ftxui/component/component.hpp>
 #include <ftxui/dom/elements.hpp>
 
 namespace TUIKIT {
+
+namespace {
+/// Columns between the label column and the field.
+constexpr int kLabelGap = 2;
+/// Upper bound for the shared label column width; longer labels are clipped.
+constexpr int kMaxLabelColumnWidth = 32;
+} // namespace
 
 TUIForm::TUIForm(TUIWidget* /*parent*/)
     : TUIWidget(ftxui::Container::Vertical({})) {
 }
 
 ftxui::Component TUIForm::makeRow(const std::string& label, const std::shared_ptr<TUIWidget>& field) {
+    // All rows share the same label column width (the longest label in the
+    // form), so the fields line up like in a GUI form.
+    int label_width = 1;
+    for (const auto& entry : fields_) {
+        label_width = std::max(label_width, static_cast<int>(entry.first.size()));
+    }
+    label_width = std::min(label_width, kMaxLabelColumnWidth);
+
+    auto label_renderer = ftxui::Renderer([label, label_width] {
+        auto& theme = TUIStyle::instance().currentTheme();
+        return ftxui::text(label) | ftxui::color(theme.text) |
+               ftxui::size(ftxui::WIDTH, ftxui::EQUAL, label_width);
+    });
+    auto gutter = ftxui::Renderer([] {
+        return ftxui::text(std::string(kLabelGap, ' '));
+    });
     return ftxui::Container::Horizontal({
-        ftxui::Renderer([label] {
-            auto& theme = TUIStyle::instance().currentTheme();
-            return ftxui::text(label) | ftxui::color(theme.text);
-        }),
+        label_renderer,
+        gutter,
         field->get_ftxui_component()
     });
 }
