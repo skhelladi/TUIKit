@@ -1,5 +1,7 @@
 #include "tuikit/widgets/TUIComboBox.h"
+#include "tuikit/core/TUIStyle.h"
 #include <ftxui/component/component.hpp>
+#include <ftxui/dom/elements.hpp>
 
 namespace TUIKIT {
 
@@ -50,15 +52,15 @@ void TUIComboBox::setSelected(int index) {
 }
 
 void TUIComboBox::update_ftxui_dropdown_component() {
-    component_ = ftxui::Dropdown(&options_, &selected_index_);
-    component_ = ftxui::Renderer(component_, [this] {
+    auto dropdown = ftxui::Dropdown(&options_, &selected_index_);
+    component_ = ftxui::Renderer(dropdown, [this, dropdown] {
         if (last_known_index_ != selected_index_) {
             last_known_index_ = selected_index_;
             if (on_select_) {
                 on_select_(selected_index_);
             }
         }
-        return component_->Render();
+        return TUIStyle::fieldFrame(dropdown->Render(), dropdown->Focused()) | ftxui::xflex;
     });
 }
 

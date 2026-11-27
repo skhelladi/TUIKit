@@ -1,4 +1,5 @@
 #include "tuikit/widgets/TUITextField.h"
+#include "tuikit/core/TUIStyle.h"
 #include <ftxui/component/component.hpp>
 #include <ftxui/component/event.hpp>
 
@@ -7,7 +8,7 @@ namespace TUIKIT {
 TUITextField::TUITextField(const std::string& placeholder, TUIWidget* /*parent*/)
     : value_("") {
     input_ftxui_component_ = ftxui::Input(&value_, placeholder, ftxui::InputOption{ .on_change = [this] { if (on_change_) { on_change_(value_); } }, .on_enter = [this] { if (on_enter_) { on_enter_(); } } });
-    component_ = input_ftxui_component_;
+    component_ = TUIStyle::decorateField(input_ftxui_component_);
 }
 
 void TUITextField::onChange(OnChangeCallback cb) {
@@ -30,9 +31,11 @@ void TUITextField::setText(const std::string& text) {
 void TUITextField::setReadOnly(bool read_only) {
     read_only_ = read_only;
     if (read_only_) {
-        component_ = ftxui::CatchEvent(input_ftxui_component_, [](ftxui::Event /*event*/) { return true; }) | ftxui::color(ftxui::Color::GrayDark) | ftxui::bgcolor(ftxui::Color::Black);
+        component_ = TUIStyle::decorateField(
+            ftxui::CatchEvent(input_ftxui_component_,
+                              [](ftxui::Event /*event*/) { return true; }));
     } else {
-        component_ = input_ftxui_component_;
+        component_ = TUIStyle::decorateField(input_ftxui_component_);
     }
 }
 

@@ -30,6 +30,7 @@ private:
     OnChangeCallback on_change_;
     ftxui::Component input_ftxui_component_;
     ftxui::InputOption input_options_;
+    ftxui::Component buildRenderer() const;
 };
 
 } // namespace TUIKIT

@@ -1,4 +1,5 @@
 #include "tuikit/widgets/TUISpinBox.h"
+#include "tuikit/core/TUIStyle.h"
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/event.hpp"
 #include "ftxui/component/screen_interactive.hpp"
@@ -40,7 +41,7 @@ namespace TUIKIT
     auto input_component = ftxui::Input(&value_str_, label, option);
 
     // Wrap the input_component to handle ArrowUp/ArrowDown events
-    component_ = ftxui::CatchEvent(input_component, [this, increment](ftxui::Event event) {
+    auto event_handler = ftxui::CatchEvent(input_component, [this, increment](ftxui::Event event) {
         if (read_only_) return false;
         if (event == ftxui::Event::ArrowRight) {
             setValue(value_ + increment);
@@ -63,6 +64,8 @@ namespace TUIKIT
         }
         return false;
     });
+
+    component_ = TUIStyle::decorateField(event_handler);
 }
 
     void TUISpinBox::onChange(OnChangeCallback cb)

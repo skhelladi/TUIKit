@@ -23,6 +23,24 @@ const AppTheme& TUIStyle::currentTheme() const {
     return current_theme_;
 }
 
+ftxui::Element TUIStyle::fieldFrame(ftxui::Element inner, bool focused) {
+    const AppTheme& theme = TUIStyle::instance().currentTheme();
+    // The explicit text color keeps the frame color from bleeding into the
+    // field content (an inner style takes precedence over the outer one).
+    inner = std::move(inner) |
+            ftxui::bgcolor(theme.fieldBackground) |
+            ftxui::color(theme.text);
+    return std::move(inner) | ftxui::borderRounded |
+           ftxui::color(focused ? theme.primary : theme.fieldBorder);
+}
+
+ftxui::Component TUIStyle::decorateField(ftxui::Component field) {
+    return ftxui::Renderer(field, [field] {
+        return TUIStyle::fieldFrame(field->Render(), field->Focused()) |
+               ftxui::xflex;
+    });
+}
+
 void TUIStyle::initializeThemes() {
     // Dark Theme (Default)
     themes_[Theme::Dark] = {
@@ -33,7 +51,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::Red,
         ftxui::Color::Black,
         ftxui::Color::White,
-        ftxui::Color::GrayDark
+        ftxui::Color::GrayDark,
+        ftxui::Color::GrayDark,          // fieldBackground
+        ftxui::Color::GrayDark           // fieldBorder
     };
 
     // Light Theme
@@ -45,9 +65,11 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::Red,
         ftxui::Color::White,
         ftxui::Color::Black,
-        ftxui::Color::GrayLight
+        ftxui::Color::GrayLight,
+        ftxui::Color::GrayLight,         // fieldBackground
+        ftxui::Color::GrayDark           // fieldBorder
     };
-    
+
     // Monokai Theme
     themes_[Theme::Monokai] = {
         ftxui::Color::Magenta,
@@ -57,7 +79,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RedLight,
         ftxui::Color::Black,
         ftxui::Color::White,
-        ftxui::Color::GrayDark
+        ftxui::Color::GrayDark,
+        ftxui::Color::GrayDark,          // fieldBackground
+        ftxui::Color::GrayDark           // fieldBorder
     };
 
     // Solarized Theme
@@ -69,7 +93,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::Red,
         ftxui::Color::RGB(0, 43, 54),
         ftxui::Color::RGB(131, 148, 150),
-        ftxui::Color::RGB(88, 110, 117)
+        ftxui::Color::RGB(88, 110, 117),
+        ftxui::Color::RGB(7, 54, 66),    // fieldBackground (base02)
+        ftxui::Color::RGB(88, 110, 117)  // fieldBorder (base01)
     };
 
     // Dracula Theme
@@ -81,7 +107,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(255, 85, 85),
         ftxui::Color::RGB(40, 42, 54),
         ftxui::Color::RGB(248, 248, 242),
-        ftxui::Color::RGB(98, 114, 164)
+        ftxui::Color::RGB(98, 114, 164),
+        ftxui::Color::RGB(68, 71, 90),   // fieldBackground (selection)
+        ftxui::Color::RGB(98, 114, 164)  // fieldBorder (comment)
     };
 
     // Nord Theme
@@ -93,7 +121,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(191, 97, 106),
         ftxui::Color::RGB(46, 52, 64),
         ftxui::Color::RGB(216, 222, 233),
-        ftxui::Color::RGB(76, 86, 106)
+        ftxui::Color::RGB(76, 86, 106),
+        ftxui::Color::RGB(59, 66, 82),   // fieldBackground (polar night 1)
+        ftxui::Color::RGB(76, 86, 106)   // fieldBorder (polar night 3)
     };
 
     // Blueberry Theme
@@ -105,7 +135,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(255, 102, 102),
         ftxui::Color::RGB(32, 32, 48),
         ftxui::Color::RGB(221, 221, 255),
-        ftxui::Color::RGB(64, 64, 96)
+        ftxui::Color::RGB(64, 64, 96),
+        ftxui::Color::RGB(48, 48, 72),   // fieldBackground
+        ftxui::Color::RGB(64, 64, 96)    // fieldBorder
     };
 
     // GitHub Theme
@@ -117,7 +149,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(248, 81, 73),
         ftxui::Color::RGB(255, 255, 255),
         ftxui::Color::RGB(36, 41, 46),
-        ftxui::Color::RGB(225, 228, 232)
+        ftxui::Color::RGB(225, 228, 232),
+        ftxui::Color::RGB(246, 248, 250), // fieldBackground (canvas subtle)
+        ftxui::Color::RGB(208, 215, 222)  // fieldBorder
     };
 
     // Material Theme
@@ -129,7 +163,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(244, 67, 54),
         ftxui::Color::RGB(250, 250, 250),
         ftxui::Color::RGB(33, 33, 33),
-        ftxui::Color::RGB(224, 224, 224)
+        ftxui::Color::RGB(224, 224, 224),
+        ftxui::Color::RGB(245, 245, 245), // fieldBackground
+        ftxui::Color::RGB(189, 189, 189)  // fieldBorder
     };
 
     // MaterialDark Theme
@@ -141,7 +177,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(239, 154, 154),
         ftxui::Color::RGB(18, 18, 18),
         ftxui::Color::RGB(255, 255, 255),
-        ftxui::Color::RGB(66, 66, 66)
+        ftxui::Color::RGB(66, 66, 66),
+        ftxui::Color::RGB(42, 42, 42),   // fieldBackground
+        ftxui::Color::RGB(97, 97, 97)    // fieldBorder
     };
 
     // MaterialLight Theme
@@ -153,7 +191,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(211, 47, 47),
         ftxui::Color::RGB(255, 255, 255),
         ftxui::Color::RGB(0, 0, 0),
-        ftxui::Color::RGB(224, 224, 224)
+        ftxui::Color::RGB(224, 224, 224),
+        ftxui::Color::RGB(245, 245, 245), // fieldBackground
+        ftxui::Color::RGB(189, 189, 189)  // fieldBorder
     };
 
     // MaterialBlue Theme
@@ -165,7 +205,9 @@ void TUIStyle::initializeThemes() {
         ftxui::Color::RGB(239, 83, 80),
         ftxui::Color::RGB(232, 234, 246),
         ftxui::Color::RGB(26, 26, 26),
-        ftxui::Color::RGB(207, 216, 220)
+        ftxui::Color::RGB(207, 216, 220),
+        ftxui::Color::RGB(235, 238, 245), // fieldBackground
+        ftxui::Color::RGB(176, 190, 197)  // fieldBorder
     };
 }
 
