@@ -13,5 +13,7 @@ private:
     std::string title_;
     std::shared_ptr<TUIWidget> content_widget_ = nullptr;
     bool show_border_ = true;
+    void rebuildRenderer();
+    ftxui::Element renderContent() const;
 };
 }

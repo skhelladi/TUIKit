@@ -20,6 +20,7 @@ public:
 
 private:
     std::shared_ptr<TUIHBoxLayout> toolbar_layout_ = nullptr;
+    int item_count_ = 0; // number of buttons added, to place separators
 };
 
 } // namespace TUIKIT
