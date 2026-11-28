@@ -10,7 +10,7 @@ namespace {
 /// Columns between the label column and the field.
 constexpr int kLabelGap = 2;
 /// Upper bound for the shared label column width; longer labels are clipped.
-constexpr int kMaxLabelColumnWidth = 32;
+constexpr int kMaxLabelColumnWidth = 24;
 } // namespace
 
 TUIForm::TUIForm(TUIWidget* /*parent*/)
@@ -18,21 +18,22 @@ TUIForm::TUIForm(TUIWidget* /*parent*/)
 }
 
 ftxui::Component TUIForm::makeRow(const std::string& label, const std::shared_ptr<TUIWidget>& field) {
-    // All rows share the same label column width (TUIForm::label_column_width_),
-    // so the fields line up like in a GUI form.
-    auto label_renderer = ftxui::Renderer([label, width = label_column_width_] {
+    using namespace ftxui;
+    // Short label: the horizontal layout — the label column (shared by every
+    // row, so the fields align), the gutter, then the field. The label is
+    // vertically centered in its column: the decorated fields are three
+    // lines tall (frame) and a top-aligned label reads as the caption of the
+    // frame's top border instead of the field's name — the value then sits
+    // one line below an unlabeled line.
+    auto label_renderer = Renderer([label, width = label_column_width_] {
         auto& theme = TUIStyle::instance().currentTheme();
-        return ftxui::text(label) | ftxui::color(theme.text) |
-               ftxui::size(ftxui::WIDTH, ftxui::EQUAL, width);
+        return text(label) | color(theme.text) | vcenter
+             | size(WIDTH, EQUAL, width);
     });
-    auto gutter = ftxui::Renderer([] {
-        return ftxui::text(std::string(kLabelGap, ' '));
+    auto gutter = Renderer([] {
+        return text(std::string(kLabelGap, ' ')) | vcenter;
     });
-    return ftxui::Container::Horizontal({
-        label_renderer,
-        gutter,
-        field->get_ftxui_component()
-    });
+    return Container::Horizontal({label_renderer, gutter, field->get_ftxui_component()});
 }
 
 void TUIForm::addField(const std::string& label, std::shared_ptr<TUIWidget> field) {
@@ -93,6 +94,8 @@ void TUIForm::rebuildRows(const std::string& focus_label) {
     for (const auto& entry : fields_) {
         label_column_width_ = std::min(kMaxLabelColumnWidth, std::max(label_column_width_, static_cast<int>(entry.first.size())));
     }
+    if (label_column_width_override_ >= 1)
+        label_column_width_ = std::min(label_column_width_, label_column_width_override_);
     component_->DetachAllChildren();
     rows_.clear();
     for (const auto& entry : fields_) {

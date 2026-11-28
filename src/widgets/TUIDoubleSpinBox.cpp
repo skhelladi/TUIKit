@@ -3,15 +3,26 @@
 #include "ftxui/component/component.hpp"
 #include "ftxui/component/event.hpp"
 #include "ftxui/component/screen_interactive.hpp"
-#include <iomanip>
-#include <sstream>
+#include <cmath>
+#include <cstdio>
 
 namespace TUIKIT
 {
+namespace {
+// The display form of a double: %.10g keeps the value the user typed
+// (1.716e-05 stays 1.716e-05 where std::to_string printed 0.000017) and
+// drops the trailing zeros of the fixed six-decimal form.
+std::string formatDouble(double value) {
+    char buffer[64];
+    std::snprintf(buffer, sizeof(buffer), "%.10g", value);
+    return buffer;
+}
+} // namespace
+
 
     TUIDoubleSpinBox::TUIDoubleSpinBox(const std::string& label, double initial_value, double min, double max, 
     double increment, TUIWidget* /*parent*/)
-    : TUIWidget(ftxui::Input(&value_str_, label)), value_str_(std::to_string(initial_value)), value_(initial_value), min_(min), max_(max), on_change_(nullptr), on_enter_(nullptr)
+    : TUIWidget(ftxui::Input(&value_str_, label)), value_str_(formatDouble(initial_value)), value_(initial_value), min_(min), max_(max), on_change_(nullptr), on_enter_(nullptr)
 {
     ftxui::InputOption option;
     option.on_change = [this] {
@@ -24,10 +35,10 @@ namespace TUIKIT
                     on_change_(value_);
                 }
             } else {
-                value_str_ = std::to_string(value_);
+                value_str_ = formatDouble(value_);
             }
         } catch (const std::exception& e) {
-            value_str_ = std::to_string(value_);
+            value_str_ = formatDouble(value_);
         }
     };
 
@@ -45,7 +56,7 @@ namespace TUIKIT
         if (read_only_) return false;
         if (event == ftxui::Event::ArrowRight) {
             setValue(value_ + increment);
-            value_str_ = std::to_string(value_);
+            value_str_ = formatDouble(value_);
             if (on_change_) {
                 on_change_(value_);
             }
@@ -53,7 +64,7 @@ namespace TUIKIT
         }
         if (event == ftxui::Event::ArrowLeft) {
             setValue(value_ - increment);
-            value_str_ = std::to_string(value_);
+            value_str_ = formatDouble(value_);
             if (on_change_) {
                 on_change_(value_);
             }
@@ -98,7 +109,7 @@ namespace TUIKIT
         if (value >= min_ && value <= max_)
         {
             value_ = value;
-            value_str_ = std::to_string(value_);
+            value_str_ = formatDouble(value_);
             requestRedraw();
         }
     }
